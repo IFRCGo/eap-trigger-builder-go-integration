@@ -1,0 +1,317 @@
+{
+    "parent": "000085-1784127651261.json",
+    "actions": [
+        {
+            "action": "add",
+            "key": "addSourceButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Add Source"
+        },
+        {
+            "action": "add",
+            "key": "addTriggerButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Add Another Trigger"
+        },
+        {
+            "action": "add",
+            "key": "bothConnectorLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Both (at the same time)"
+        },
+        {
+            "action": "add",
+            "key": "connectorDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Choose how this trigger is connected to the next trigger."
+        },
+        {
+            "action": "add",
+            "key": "connectorLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Connector"
+        },
+        {
+            "action": "add",
+            "key": "connectorPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select a connector"
+        },
+        {
+            "action": "add",
+            "key": "connectorTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Connection between triggers"
+        },
+        {
+            "action": "add",
+            "key": "eitherConnectorLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Either/or (any one of these)"
+        },
+        {
+            "action": "add",
+            "key": "forecastSourcesDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Add each forecast source and its website link when available."
+        },
+        {
+            "action": "add",
+            "key": "forecastSourcesTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Sources of forecast"
+        },
+        {
+            "action": "add",
+            "key": "geographyDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Choose the scope and record the area. Search, map, and confirmation controls will be added later."
+        },
+        {
+            "action": "add",
+            "key": "geographyLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Area name"
+        },
+        {
+            "action": "add",
+            "key": "geographyPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Enter the imported or intended area"
+        },
+        {
+            "action": "add",
+            "key": "geographyTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Geographical area"
+        },
+        {
+            "action": "add",
+            "key": "geographyTypeLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Geography type"
+        },
+        {
+            "action": "add",
+            "key": "geographyUnverifiedDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Non-national geography must be confirmed with the geography selector before it can be used for generation."
+        },
+        {
+            "action": "add",
+            "key": "geographyUnverifiedTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Geography not yet confirmed"
+        },
+        {
+            "action": "add",
+            "key": "importedConnectorWarningDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Some pilot connector logic is unsupported or ambiguous. Choose one of the supported connectors between each trigger."
+        },
+        {
+            "action": "add",
+            "key": "importedConnectorWarningTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Imported connector needs attention"
+        },
+        {
+            "action": "add",
+            "key": "leadTimeLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Lead time"
+        },
+        {
+            "action": "add",
+            "key": "measureLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Measure"
+        },
+        {
+            "action": "add",
+            "key": "measurePlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select a measure"
+        },
+        {
+            "action": "add",
+            "key": "operatorLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Is/operator"
+        },
+        {
+            "action": "add",
+            "key": "operatorPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select an operator"
+        },
+        {
+            "action": "add",
+            "key": "pilotEmptyDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Complete the blank trigger form manually."
+        },
+        {
+            "action": "add",
+            "key": "pilotEmptyTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "No pilot EAPs are available"
+        },
+        {
+            "action": "add",
+            "key": "pilotLoadErrorDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "You can still complete the blank form manually, or retry loading the Trigger Builder reference data."
+        },
+        {
+            "action": "add",
+            "key": "pilotLoadErrorTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Pilot EAPs could not be loaded"
+        },
+        {
+            "action": "add",
+            "key": "pilotLoadingDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "The Trigger Builder reference data is being loaded."
+        },
+        {
+            "action": "add",
+            "key": "pilotLoadingTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Loading pilot EAPs"
+        },
+        {
+            "action": "add",
+            "key": "pilotSelectionDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select an existing pilot to load its activation triggers, or leave this blank and complete the form manually."
+        },
+        {
+            "action": "add",
+            "key": "pilotSelectionTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Start from a pilot EAP"
+        },
+        {
+            "action": "add",
+            "key": "pilotSelectLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Pilot EAP"
+        },
+        {
+            "action": "add",
+            "key": "pilotSelectPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select a pilot EAP"
+        },
+        {
+            "action": "add",
+            "key": "probabilityLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Probability (%)"
+        },
+        {
+            "action": "add",
+            "key": "removeSourceButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Remove source"
+        },
+        {
+            "action": "add",
+            "key": "removeTriggerButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Remove trigger"
+        },
+        {
+            "action": "add",
+            "key": "retryButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Retry"
+        },
+        {
+            "action": "add",
+            "key": "sequentialConnectorLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Sequential (one after another)"
+        },
+        {
+            "action": "add",
+            "key": "sourceLinkLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Source link"
+        },
+        {
+            "action": "add",
+            "key": "sourceLinkPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "https://example.org"
+        },
+        {
+            "action": "add",
+            "key": "sourceNameLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Source"
+        },
+        {
+            "action": "add",
+            "key": "thresholdTypeLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Threshold type"
+        },
+        {
+            "action": "add",
+            "key": "thresholdTypePlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select a threshold type"
+        },
+        {
+            "action": "add",
+            "key": "timeframeLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Timeframe"
+        },
+        {
+            "action": "add",
+            "key": "timeframePlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select a timeframe"
+        },
+        {
+            "action": "add",
+            "key": "triggerCardHeading",
+            "namespace": "eapTriggerBuilder",
+            "value": "Trigger"
+        },
+        {
+            "action": "add",
+            "key": "triggerLogicDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Define the threshold, timing, and probability for this activation trigger."
+        },
+        {
+            "action": "add",
+            "key": "triggerLogicTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Trigger logic"
+        },
+        {
+            "action": "add",
+            "key": "unitLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Unit"
+        },
+        {
+            "action": "add",
+            "key": "unitPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select a unit"
+        },
+        {
+            "action": "add",
+            "key": "valueLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Value"
+        }
+    ]
+}
