@@ -21,7 +21,7 @@ if [ -d "$DESTINATION_DIRECTORY" ]; then
   fi
 fi
 
-mkdir -p $(dirname "$DESTINATION_DIRECTORY")
+mkdir -p "$(dirname "$DESTINATION_DIRECTORY")"
 cp -r --no-target-directory "$SOURCE_DIRECTORY" "$DESTINATION_DIRECTORY"
 
 find "$DESTINATION_DIRECTORY" -type f -exec sed -i "s|\<APP_TITLE_PLACEHOLDER\>|$APP_TITLE|g" {} +
