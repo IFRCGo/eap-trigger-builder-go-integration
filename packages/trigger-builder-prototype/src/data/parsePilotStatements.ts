@@ -18,7 +18,7 @@ export function toStringArray(value: unknown): string[] {
     return value.filter((item): item is string => typeof item === 'string');
 }
 
-export function toOptionalNumberValue(value: unknown): number | undefined {
+function toOptionalNumberValue(value: unknown): number | undefined {
     if (typeof value === 'number' && !Number.isNaN(value)) {
         return value;
     }

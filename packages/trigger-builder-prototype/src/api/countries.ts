@@ -1,6 +1,6 @@
 import { getRuntimeGoApiBaseUrl } from '../config/runtime';
 
-export type CountryBoundingBox = [number, number, number, number];
+type CountryBoundingBox = [number, number, number, number];
 
 interface GeoJsonPoint {
     type: 'Point';

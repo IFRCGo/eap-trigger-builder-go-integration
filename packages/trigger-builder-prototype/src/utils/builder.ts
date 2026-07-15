@@ -13,7 +13,7 @@ import type {
 
 const CONNECTOR_SENTINELS = new Set(['custom-logic', 'custom-transition']);
 
-export const phaseOptions: PrototypeOption[] = [
+const phaseOptions: PrototypeOption[] = [
     { key: 'pre_activation', label: 'Pre-activation' },
     { key: 'activation', label: 'Activation' },
     { key: 'stop', label: 'Stop mechanism' },
@@ -63,7 +63,7 @@ export function formatSavedTime(value: string | undefined): string {
     return `Saved at ${timeFormatter.format(parsed)}`;
 }
 
-export function toFileSafeSegment(value: string): string {
+function toFileSafeSegment(value: string): string {
     const normalized = value
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -136,7 +136,7 @@ export function buildMetadataSeed(
     };
 }
 
-export function buildStatementDraftSeed(
+function buildStatementDraftSeed(
     primaryVariables: PrototypeOption[],
     subcategoriesByVariable: Record<string, PrototypeOption[]>,
     unitsByVariable: Record<string, PrototypeOption[]>,

@@ -140,7 +140,7 @@ function toReviewOutput(
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
-export interface GenerateResult {
+interface GenerateResult {
     reviewOutput: ReviewOutput;
     warnings: string[];
 }
