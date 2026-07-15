@@ -2,6 +2,7 @@ const {
     APP_TITLE,
     APP_ENVIRONMENT,
     APP_API_ENDPOINT,
+    APP_TRIGGER_BUILDER_API_ENDPOINT,
     APP_ADMIN_URL,
     APP_MAPBOX_ACCESS_TOKEN,
     APP_TINY_API_KEY,
@@ -28,6 +29,7 @@ export const appPackageName = APP_PACKAGE_NAME;
 export const appRepositoryUrl = APP_REPOSITORY_URL;
 
 export const api = APP_API_ENDPOINT;
+export const triggerBuilderApi = APP_TRIGGER_BUILDER_API_ENDPOINT;
 export const adminUrl = APP_ADMIN_URL ?? `${api}admin/`;
 export const mbtoken = APP_MAPBOX_ACCESS_TOKEN;
 export const riskApi = APP_RISK_API_ENDPOINT;

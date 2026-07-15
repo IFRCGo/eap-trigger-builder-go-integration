@@ -8,6 +8,7 @@ on:
 
 env:
   APP_API_ENDPOINT: 'https://goadmin-stage.ifrc.org/'
+  APP_TRIGGER_BUILDER_API_ENDPOINT: 'http://localhost:8000/'
   APP_ENVIRONMENT: 'development'
   APP_MAPBOX_ACCESS_TOKEN: 'dummy-token'
   APP_RISK_API_ENDPOINT: 'https://go-risk-api-stage.ifrc.org/'
