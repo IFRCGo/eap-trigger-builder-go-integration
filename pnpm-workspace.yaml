@@ -2,6 +2,7 @@ packages:
   - app
   - packages/ui
   - packages/go-ui-storybook
+  - packages/trigger-builder-prototype
 onlyBuiltDependencies:
   - '@swc/core'
   - core-js

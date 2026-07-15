@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: nginx-serve/Dockerfile
+    image: ifrcgo/go-web-app:local
+    ports:
+      - "3000:80"
+    environment:
+      APP_TITLE: ${APP_TITLE:-IFRC GO}
+      APP_ENVIRONMENT: ${APP_ENVIRONMENT:-development}
+      APP_MAPBOX_ACCESS_TOKEN: ${APP_MAPBOX_ACCESS_TOKEN:-APP_MAPBOX_ACCESS_TOKEN_PLACEHOLDER}
+      APP_TINY_API_KEY: ${APP_TINY_API_KEY:-APP_TINY_API_KEY_PLACEHOLDER}
+      APP_API_ENDPOINT: ${APP_API_ENDPOINT:-http://host.docker.internal:8000/}
+      APP_TRANSLATION_API_ENDPOINT: ${APP_TRANSLATION_API_ENDPOINT:-https://APP-TRANSLATION-API-ENDPOINT-PLACEHOLDER.COM/}
+      APP_RISK_API_ENDPOINT: ${APP_RISK_API_ENDPOINT:-https://APP-RISK-API-ENDPOINT-PLACEHOLDER.COM/}
+      APP_SDT_URL: ${APP_SDT_URL:-https://APP-SDT-URL-PLACEHOLDER.COM/}
+      APP_SENTRY_DSN: ${APP_SENTRY_DSN:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  trigger-builder-prototype:
+    build:
+      context: ..
+      dockerfile: go-web-app/packages/trigger-builder-prototype/nginx-serve/Dockerfile
+    image: ifrcgo/trigger-builder-prototype:local
+    ports:
+      - "3101:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
