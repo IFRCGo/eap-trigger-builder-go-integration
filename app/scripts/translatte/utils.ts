@@ -25,6 +25,10 @@ const readFilePromisify = promisify(readFile);
 export const writeFilePromisify = promisify(writeFile);
 const unlinkPromisify = promisify(unlink);
 
+function normalizePathForGlob(filePath: string) {
+    return filePath.replaceAll('\\', '/');
+}
+
 // Utilities
 
 export function resolveUrl(base: string, endpoint: string): string {
@@ -279,7 +283,10 @@ export async function getMigrationFilesAttrs(basePath: string, pathName: string)
         ? join(pathName, '[0-9]+-[0-9]+.json')
         : join(basePath, pathName, '[0-9]+-[0-9]+.json')
 
-    const files = await glob(fullPath, { ignore: ['node_modules'], absolute: true });
+    const files = await glob(
+        normalizePathForGlob(fullPath),
+        { ignore: ['node_modules'], absolute: true },
+    );
 
     interface MigrationFileAttrs {
         migrationFileName: string;
@@ -318,7 +325,10 @@ export async function getTranslationFileNames(basePath: string, pathNames: strin
     ));
 
     const fileNamesPromise = fullPathNames.map(async (fullPathName) => {
-        return glob(fullPathName, { ignore: ['node_modules'], absolute: true });
+        return glob(
+            normalizePathForGlob(fullPathName),
+            { ignore: ['node_modules'], absolute: true },
+        );
     });
     const fileNames = (await Promise.all(fileNamesPromise)).flat();
     return unique(fileNames);
