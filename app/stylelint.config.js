@@ -1,8 +1,8 @@
-import path from 'path';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const __filename = new URL(import.meta.url).pathname;
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const cssPaths = [
     path.resolve(__dirname, './src/index.css'),
     path.resolve(__dirname, './node_modules/@ifrc-go/ui/dist/index.css'),
