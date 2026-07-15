@@ -1,0 +1,8 @@
+dist/
+.env.local
+.env.*.local
+e2e-*.png
+test-results/
+playwright-report/
+*.pid
+preview.err

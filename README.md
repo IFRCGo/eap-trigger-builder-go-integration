@@ -73,6 +73,25 @@ To begin, ensure you have network access. Then, you'll need the following:
    pnpm start
    ```
 
+### Docker Workflow
+
+From `go-web-app`, you can host the main app and the Trigger Builder prototype together with Docker:
+
+```bash
+pnpm docker:up
+```
+
+This publishes the main app at `http://localhost:3000` and the prototype at `http://localhost:3101`.
+
+If you only want the prototype container:
+
+```bash
+pnpm docker:up:prototype
+```
+
+> [!NOTE]\
+> The prototype image builds from the repository root because it needs the shared `implementation_inputs` bundle created during Stage 1.
+
 ## Contributing
 
 * Check out existing [Issues](https://github.com/IFRCGo/go-web-app/issues) and [Pull Requests](https://github.com/IFRCGo/go-web-app/pulls) to contribute.
