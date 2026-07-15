@@ -1,0 +1,21 @@
+{
+    "namespace": "eapTriggerBuilder",
+    "strings": {
+        "pageTitle": "EAP Trigger Builder",
+        "pageHeading": "EAP Trigger Builder - Full EAP",
+        "pageDescription": "Use this Full EAP form to define the Trigger Model for your Early Action Protocol.",
+        "cancelButtonLabel": "Cancel",
+        "saveAndCloseButtonLabel": "Save and close",
+        "shareButtonLabel": "Share",
+        "overviewStepLabel": "Overview",
+        "riskAnalysisStepLabel": "Risk Analysis",
+        "triggerModelStepLabel": "Trigger Model",
+        "selectionActionsStepLabel": "Selection of Actions",
+        "activationProcessStepLabel": "EAP Activation Process",
+        "mealStepLabel": "MEAL",
+        "nationalSocietyCapacityStepLabel": "National Society Capacity",
+        "financeLogisticsStepLabel": "Finance & Logistics",
+        "triggerModelHeading": "Trigger Model",
+        "sectionQualityCriteriaLabel": "Section quality criteria"
+    }
+}

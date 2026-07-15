@@ -773,6 +773,19 @@ const accountMyFormsEap = customWrapRoute({
     },
 });
 
+const eapTriggerBuilder = customWrapRoute({
+    parent: rootLayout,
+    path: 'eap-trigger-builder',
+    component: {
+        render: () => import('#views/EapTriggerBuilder'),
+        props: {},
+    },
+    context: {
+        title: 'EAP Trigger Builder',
+        visibility: 'anything',
+    },
+});
+
 const fullEapForm = customWrapRoute({
     parent: rootLayout,
     path: 'eap/:eapId/full',
@@ -1492,6 +1505,7 @@ const wrappedRoutes = {
     accountMyFormsDref,
     accountMyFormsThreeW,
     accountMyFormsEap,
+    eapTriggerBuilder,
     resources,
     search,
     allThreeWProject,

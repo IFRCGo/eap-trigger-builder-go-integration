@@ -41,6 +41,7 @@
         "userMenuCreateDrefApplication":"Create DREF Application",
         "myDrefApplications": "My DREF Applications",
         "earlyActionProtocols": "Early Action Protocols (EAP)",
+        "eapTriggerBuilder": "EAP Trigger Builder",
         "userMenuSurge":"The section displays the summary of deployments within current and ongoing emergencies. Login to see available details",
         "userMenuSurgeGlobalOverview":"Surge Global Overview",
         "userMenuOperationalToolbox":"Operational Toolbox",
