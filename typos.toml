@@ -13,4 +13,5 @@ extend-exclude = [
     OT = "OT"
     MENA = "MENA"
     ANC = "ANC"
+    OND = "OND"
     OTHR = "OTHR"
