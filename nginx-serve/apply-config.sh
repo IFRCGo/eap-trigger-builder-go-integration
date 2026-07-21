@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 
 SOURCE_DIRECTORY=${APPLY_CONFIG__SOURCE_DIRECTORY?Required}
 DESTINATION_DIRECTORY=${APPLY_CONFIG__DESTINATION_DIRECTORY?Required}
@@ -36,9 +36,3 @@ find "$DESTINATION_DIRECTORY" -type f -exec sed -i "s|\<https://APP-TRANSLATION-
 find "$DESTINATION_DIRECTORY" -type f -exec sed -i "s|\<https://APP-RISK-API-ENDPOINT-PLACEHOLDER.COM/|$APP_RISK_API_ENDPOINT|g" {} +
 find "$DESTINATION_DIRECTORY" -type f -exec sed -i "s|\<https://APP-SDT-URL-PLACEHOLDER.COM/|$APP_SDT_URL|g" {} +
 find "$DESTINATION_DIRECTORY" -type f -exec sed -i "s|\<https://APP-SENTRY-DSN-PLACEHOLDER.COM\>|$APP_SENTRY_DSN|g" {} +
-
-# Show diffs (Useful to debug issues)
-set +xe
-find "$SOURCE_DIRECTORY" -type f -printf '%P\n' | while IFS= read -r file; do
-    diff -W 100 <(fold -w 100 "$SOURCE_DIRECTORY/$file") <(fold -w 100 "$DESTINATION_DIRECTORY/$file") --suppress-common-lines
-done
