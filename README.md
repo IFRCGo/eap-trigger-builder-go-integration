@@ -75,18 +75,29 @@ To begin, ensure you have network access. Then, you'll need the following:
 
 ### Docker Workflow
 
-From `go-web-app`, you can host the main app and the Trigger Builder prototype together with Docker:
+From `go-web-app`, build and host the GO-integrated Trigger Builder, its backend,
+and the preserved standalone prototype together:
 
 ```bash
-pnpm docker:up
+docker compose up --build -d
 ```
 
-This publishes the main app at `http://localhost:3000` and the prototype at `http://localhost:3101`.
+| Service | Local URL |
+| --- | --- |
+| GO app and integrated Trigger Builder | `http://127.0.0.1:3000/eap-trigger-builder` |
+| Trigger Builder backend | `http://127.0.0.1:8000/api/trigger-builder/schema` |
+| Preserved standalone prototype | `http://127.0.0.1:3101` |
+
+After every implementation stage, rebuild these images with the same command,
+wait for all services to become healthy, and run Playwright visual checks against
+the three URLs. Do not deploy the new GO-integrated frontend to Google Cloud until
+all planned stages and local Docker acceptance checks pass. The existing standalone
+prototype remains unchanged locally and in Cloud Run.
 
 If you only want the prototype container:
 
 ```bash
-pnpm docker:up:prototype
+docker compose up --build -d trigger-builder-prototype
 ```
 
 > [!NOTE]\

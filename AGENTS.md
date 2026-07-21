@@ -61,10 +61,16 @@ corepack pnpm -F go-web-app test
 corepack pnpm -F go-web-app build
 corepack pnpm -F @ifrc-go/trigger-builder-prototype test
 corepack pnpm -F @ifrc-go/trigger-builder-prototype build
-corepack pnpm docker:up
+docker compose up --build -d
 ```
 
 Do not make live Gemini calls in normal automated tests.
+
+After every implementation stage, rebuild all three Docker services and use
+Playwright to inspect the integrated route at `http://127.0.0.1:3000/eap-trigger-builder`,
+the backend at `http://127.0.0.1:8000`, and the unchanged prototype at
+`http://127.0.0.1:3101`. Do not deploy `trigger-builder-go-frontend` to Google
+Cloud until every planned stage and the local Docker acceptance gate are complete.
 
 ## Graphify workflow
 
