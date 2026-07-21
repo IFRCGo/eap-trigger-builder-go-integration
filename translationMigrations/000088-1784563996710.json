@@ -1,0 +1,23 @@
+{
+    "parent": "000087-1784554274412.json",
+    "actions": [
+        {
+            "action": "add",
+            "key": "deterministicStatementDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "This statement is automatically generated from the form fields above."
+        },
+        {
+            "action": "add",
+            "key": "deterministicStatementEmpty",
+            "namespace": "eapTriggerBuilder",
+            "value": "Complete the trigger fields to generate the statement."
+        },
+        {
+            "action": "add",
+            "key": "deterministicStatementTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Trigger statement"
+        }
+    ]
+}

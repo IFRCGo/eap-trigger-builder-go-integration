@@ -48,6 +48,35 @@ export interface ForecastSource {
 
 export type TriggerConnector = 'THEN' | 'OR' | 'AND';
 
+export interface GeographyCoordinates {
+    longitude: number;
+    latitude: number;
+}
+
+export type GeographySource =
+    | 'go_admin1'
+    | 'go_admin2'
+    | 'mapbox_search'
+    | 'mapbox_pin'
+    | 'pilot_geocoded';
+
+export interface GeographySelection {
+    geographyFeatureId?: string;
+    geographyLabel: string;
+    geographyCoordinates?: GeographyCoordinates;
+    geographySource?: GeographySource;
+    geographyConfirmed: boolean;
+}
+
+export interface DraftCountry {
+    id: number;
+    iso: string;
+    iso3: string;
+    name: string;
+    centroid: GeographyCoordinates | undefined;
+    boundingBox: [number, number, number, number] | undefined;
+}
+
 export interface TriggerDraft {
     id: string;
     canonicalVariable: string;
@@ -60,6 +89,9 @@ export interface TriggerDraft {
     timeframeUnit: string;
     geographyType: string;
     geographyLabel: string;
+    geographyFeatureId: string | undefined;
+    geographyCoordinates: GeographyCoordinates | undefined;
+    geographySource: GeographySource | undefined;
     geographyConfirmed: boolean;
     sources: ForecastSource[];
     connectorToNext: TriggerConnector | undefined;
@@ -68,7 +100,13 @@ export interface TriggerDraft {
 export interface TriggerBuilderDraft {
     selectedPilotId: string | undefined;
     selectedPilotName: string | undefined;
+    country: DraftCountry | undefined;
     triggers: TriggerDraft[];
     importedConnectorWarning: boolean;
     aiStatement: string | undefined;
+}
+
+export interface ConfirmedGeographyPayload extends GeographySelection {
+    geographyType: string;
+    geographyConfirmed: true;
 }

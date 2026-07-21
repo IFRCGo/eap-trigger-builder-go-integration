@@ -1,0 +1,293 @@
+{
+    "parent": "000086-1784132735942.json",
+    "actions": [
+        {
+            "action": "add",
+            "key": "countrySelectionDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "The country limits geography search and supplies the national selection. Pilot EAPs select a matching country when one can be identified."
+        },
+        {
+            "action": "add",
+            "key": "countrySelectLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Country"
+        },
+        {
+            "action": "add",
+            "key": "countrySelectPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select a country"
+        },
+        {
+            "action": "add",
+            "key": "geographyChangeButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Change geography"
+        },
+        {
+            "action": "add",
+            "key": "geographyCloseButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Close geography selector"
+        },
+        {
+            "action": "add",
+            "key": "geographyConfirmedDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "This structured geography is ready for statement generation."
+        },
+        {
+            "action": "add",
+            "key": "geographyConfirmedTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Geography confirmed"
+        },
+        {
+            "action": "add",
+            "key": "geographySelectButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Select geography"
+        },
+        {
+            "action": "add",
+            "key": "geographySelectorLoadingDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "The map interaction is loading only for this trigger."
+        },
+        {
+            "action": "add",
+            "key": "geographySelectorLoadingTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Loading geography selector"
+        },
+        {
+            "action": "update",
+            "key": "geographyDescription",
+            "namespace": "eapTriggerBuilder",
+            "newValue": "Choose the scope, select the area on the map or through search, and explicitly confirm it."
+        },
+        {
+            "action": "update",
+            "key": "geographyPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "newValue": "No confirmed area selected"
+        },
+        {
+            "action": "update",
+            "key": "geographyUnverifiedDescription",
+            "namespace": "eapTriggerBuilder",
+            "newValue": "Select a country for national scope, or confirm a non-national location before it can be used for generation."
+        },
+        {
+            "action": "add",
+            "key": "geographyAdminCenterNoFeatureError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "No administrative feature is visible at the map centre. Pan the map and try again."
+        },
+        {
+            "action": "add",
+            "key": "geographyAdminOneUnavailableError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "The IFRC Admin-1 layer is not available for this token or style."
+        },
+        {
+            "action": "add",
+            "key": "geographyBasinReferenceDescription",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "A basin chosen through search or a dropped pin is a reference location, not an authoritative watershed polygon."
+        },
+        {
+            "action": "add",
+            "key": "geographyBasinReferenceTitle",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Reference location only"
+        },
+        {
+            "action": "add",
+            "key": "geographyClearButtonLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Clear selection"
+        },
+        {
+            "action": "add",
+            "key": "geographyConfirmationBlockedDescription",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Try another search or map selection."
+        },
+        {
+            "action": "add",
+            "key": "geographyConfirmButtonLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Confirm geography"
+        },
+        {
+            "action": "add",
+            "key": "geographyConfirmedSelectionTitle",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Confirmed geography"
+        },
+        {
+            "action": "add",
+            "key": "geographyCountryRequiredDescription",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "A structured GO country with map boundaries is required before geography can be selected."
+        },
+        {
+            "action": "add",
+            "key": "geographyCountryRequiredTitle",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Select a country first"
+        },
+        {
+            "action": "add",
+            "key": "geographyDropPinButtonLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Drop pin at map centre"
+        },
+        {
+            "action": "add",
+            "key": "geographyImportedNoMatchError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "The imported geography could not be matched. Select a new location."
+        },
+        {
+            "action": "add",
+            "key": "geographyImportedSelectionTitle",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Unverified imported location"
+        },
+        {
+            "action": "add",
+            "key": "geographyKeyboardDescription",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Keyboard option: focus the map, use arrow keys to position its centre, then use the selection button."
+        },
+        {
+            "action": "add",
+            "key": "geographyMapAriaLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Interactive geography map for"
+        },
+        {
+            "action": "add",
+            "key": "geographyMapboxUnavailableDescription",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "No runtime Mapbox public token is configured. Geography confirmation is blocked; no fallback country or location will be substituted."
+        },
+        {
+            "action": "add",
+            "key": "geographyMapboxUnavailableTitle",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Mapbox unavailable"
+        },
+        {
+            "action": "add",
+            "key": "geographyMapLoadError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Mapbox failed to load the required map resources."
+        },
+        {
+            "action": "add",
+            "key": "geographyMapLoadingLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Loading Mapbox and IFRC geography layers..."
+        },
+        {
+            "action": "add",
+            "key": "geographyMapUnavailableTitle",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Mapbox geography unavailable"
+        },
+        {
+            "action": "add",
+            "key": "geographyNoResultsError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "No Mapbox results were found inside the selected country."
+        },
+        {
+            "action": "add",
+            "key": "geographyPendingSelectionTitle",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Selection awaiting confirmation"
+        },
+        {
+            "action": "add",
+            "key": "geographyRetrieveError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Mapbox could not retrieve that location."
+        },
+        {
+            "action": "add",
+            "key": "geographyRetrieveNoCoordinatesError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Mapbox returned no coordinates for this result."
+        },
+        {
+            "action": "add",
+            "key": "geographyReverseError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Reverse geocoding failed."
+        },
+        {
+            "action": "add",
+            "key": "geographyReverseNoMatchError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Mapbox could not identify the dropped pin."
+        },
+        {
+            "action": "add",
+            "key": "geographySearchButtonLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Search Mapbox"
+        },
+        {
+            "action": "add",
+            "key": "geographySearchingButtonLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Searching..."
+        },
+        {
+            "action": "add",
+            "key": "geographySearchLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Search within selected country"
+        },
+        {
+            "action": "add",
+            "key": "geographySearchPlaceholder",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Search for a station, gauge, basin reference, or place"
+        },
+        {
+            "action": "add",
+            "key": "geographySearchResultsLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Mapbox search results"
+        },
+        {
+            "action": "add",
+            "key": "geographySearchUnavailableError",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Mapbox Search is unavailable."
+        },
+        {
+            "action": "add",
+            "key": "geographySelectAdminButtonLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Select administrative area at map centre"
+        },
+        {
+            "action": "add",
+            "key": "geographySelectedAdminFallback",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Selected administrative area"
+        },
+        {
+            "action": "add",
+            "key": "geographySelectedLocationFallback",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Selected location"
+        }
+    ]
+}

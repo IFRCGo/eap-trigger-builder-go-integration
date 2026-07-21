@@ -21,7 +21,9 @@ import {
 } from '@ifrc-go/ui';
 import { useTranslation } from '@ifrc-go/ui/hooks';
 
+import CountrySelectInput from '#components/domain/CountrySelectInput';
 import Page from '#components/Page';
+import useCountry, { type Country } from '#hooks/domain/useCountry';
 
 import getReferenceData from './api';
 import {
@@ -29,9 +31,13 @@ import {
     createBlankSource,
     createBlankTrigger,
     createPilotDraft,
+    findPilotCountry,
+    formatDeterministicStatement,
     hasCompleteConnectors,
     removeSource,
     removeTrigger,
+    resetTriggerGeographyForCountry,
+    toDraftCountry,
 } from './model';
 import TriggerCard from './TriggerCard';
 import type {
@@ -44,6 +50,7 @@ import type {
 } from './types';
 
 import i18n from './i18n.json';
+import styles from './styles.module.css';
 
 type ReferenceDataState =
     | { status: 'loading' }
@@ -62,7 +69,11 @@ function keepTriggerModelActive() {
 // eslint-disable-next-line import/prefer-default-export
 export function Component() {
     const strings = useTranslation(i18n);
+    const countries = useCountry();
     const [draft, setDraft] = useState<TriggerBuilderDraft>(createBlankDraft);
+    const [activeGeographyTriggerId, setActiveGeographyTriggerId] = useState<
+        string | undefined
+    >();
     const [loadAttempt, setLoadAttempt] = useState(0);
     const [referenceData, setReferenceData] = useState<ReferenceDataState>({ status: 'loading' });
 
@@ -108,8 +119,15 @@ export function Component() {
         geographyTypeLabel: strings.geographyTypeLabel,
         geographyLabel: strings.geographyLabel,
         geographyPlaceholder: strings.geographyPlaceholder,
+        geographyConfirmedTitle: strings.geographyConfirmedTitle,
+        geographyConfirmedDescription: strings.geographyConfirmedDescription,
         geographyUnverifiedTitle: strings.geographyUnverifiedTitle,
         geographyUnverifiedDescription: strings.geographyUnverifiedDescription,
+        geographySelectButtonLabel: strings.geographySelectButtonLabel,
+        geographyChangeButtonLabel: strings.geographyChangeButtonLabel,
+        geographyCloseButtonLabel: strings.geographyCloseButtonLabel,
+        geographySelectorLoadingTitle: strings.geographySelectorLoadingTitle,
+        geographySelectorLoadingDescription: strings.geographySelectorLoadingDescription,
         forecastSourcesTitle: strings.forecastSourcesTitle,
         forecastSourcesDescription: strings.forecastSourcesDescription,
         sourceNameLabel: strings.sourceNameLabel,
@@ -121,6 +139,7 @@ export function Component() {
     const schema = referenceData.status === 'ready'
         ? referenceData.data.schema
         : undefined;
+    const deterministicStatement = formatDeterministicStatement(draft.triggers);
 
     const handleRetry = () => {
         setReferenceData({ status: 'loading' });
@@ -129,17 +148,46 @@ export function Component() {
 
     const handlePilotChange = (pilotId: string | undefined) => {
         if (referenceData.status !== 'ready' || !pilotId) {
-            setDraft(createBlankDraft());
+            setDraft((currentDraft) => createBlankDraft(currentDraft.country));
+            setActiveGeographyTriggerId(undefined);
             return;
         }
 
         const pilot = referenceData.data.examples.find(
             (example) => example.documentId === pilotId,
         );
-        setDraft(pilot ? createPilotDraft(pilot) : createBlankDraft());
+        const pilotCountry = pilot
+            ? findPilotCountry(pilot.documentName, countries)
+            : undefined;
+        setDraft(pilot
+            ? createPilotDraft(pilot, pilotCountry)
+            : createBlankDraft());
+        setActiveGeographyTriggerId(undefined);
+    };
+
+    const handleCountryChange = (
+        _: number | undefined,
+        __: undefined,
+        country: Country | undefined,
+    ) => {
+        const nextCountry = country ? toDraftCountry(country) : undefined;
+        setDraft((currentDraft) => ({
+            ...currentDraft,
+            country: nextCountry,
+            triggers: currentDraft.triggers.map((trigger) => (
+                resetTriggerGeographyForCountry(trigger, nextCountry)
+            )),
+            aiStatement: undefined,
+        }));
+        setActiveGeographyTriggerId(undefined);
     };
 
     const handleTriggerChange = (triggerId: string, value: Partial<TriggerDraft>) => {
+        if (value.geographyType === 'national') {
+            setActiveGeographyTriggerId((activeId) => (
+                activeId === triggerId ? undefined : activeId
+            ));
+        }
         setDraft((currentDraft) => ({
             ...currentDraft,
             triggers: currentDraft.triggers.map((trigger) => (
@@ -217,12 +265,15 @@ export function Component() {
     const handleTriggerAdd = () => {
         setDraft((currentDraft) => ({
             ...currentDraft,
-            triggers: [...currentDraft.triggers, createBlankTrigger()],
+            triggers: [...currentDraft.triggers, createBlankTrigger(currentDraft.country)],
             aiStatement: undefined,
         }));
     };
 
     const handleTriggerRemove = (triggerId: string) => {
+        setActiveGeographyTriggerId((activeId) => (
+            activeId === triggerId ? undefined : activeId
+        ));
         setDraft((currentDraft) => {
             const triggers = removeTrigger(currentDraft.triggers, triggerId);
             return {
@@ -367,6 +418,20 @@ export function Component() {
                                 />
                             )}
                         </InputSection>
+                        <InputSection
+                            title={strings.countrySelectLabel}
+                            description={strings.countrySelectionDescription}
+                            withFullWidthContent
+                        >
+                            <CountrySelectInput
+                                name={undefined}
+                                label={strings.countrySelectLabel}
+                                placeholder={strings.countrySelectPlaceholder}
+                                value={draft.country?.id}
+                                onChange={handleCountryChange}
+                                required
+                            />
+                        </InputSection>
                         {draft.importedConnectorWarning && (
                             <Message
                                 title={strings.importedConnectorWarningTitle}
@@ -379,10 +444,17 @@ export function Component() {
                                     strings={triggerCardStrings}
                                     index={index}
                                     trigger={trigger}
+                                    country={draft.country}
                                     schema={schema}
                                     canRemove={index > 0}
+                                    geographyOpen={activeGeographyTriggerId === trigger.id}
                                     onChange={(value) => handleTriggerChange(trigger.id, value)}
                                     onRemove={() => handleTriggerRemove(trigger.id)}
+                                    onToggleGeography={() => setActiveGeographyTriggerId(
+                                        (activeId) => (
+                                            activeId === trigger.id ? undefined : trigger.id
+                                        ),
+                                    )}
                                     onSourceChange={(sourceId, value) => (
                                         handleSourceChange(trigger.id, sourceId, value)
                                     )}
@@ -420,6 +492,19 @@ export function Component() {
                         >
                             {strings.addTriggerButtonLabel}
                         </Button>
+                        <InputSection
+                            title={strings.deterministicStatementTitle}
+                            description={strings.deterministicStatementDescription}
+                            withFullWidthContent
+                        >
+                            <output
+                                className={styles.statementPreview}
+                                aria-live="polite"
+                                aria-atomic
+                            >
+                                {deterministicStatement || strings.deterministicStatementEmpty}
+                            </output>
+                        </InputSection>
                     </ListView>
                 </Container>
             </Page>

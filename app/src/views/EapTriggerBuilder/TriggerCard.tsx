@@ -1,4 +1,8 @@
-import { Fragment } from 'react';
+import {
+    Fragment,
+    lazy,
+    Suspense,
+} from 'react';
 import {
     AddLineIcon,
     DeleteBinLineIcon,
@@ -14,13 +18,21 @@ import {
     TextInput,
 } from '@ifrc-go/ui';
 
-import { includeCurrentOption } from './model';
+import {
+    changeGeographyType,
+    includeCurrentOption,
+} from './model';
 import type {
+    DraftCountry,
     ForecastSource,
     Option,
     TriggerBuilderSchema,
     TriggerDraft,
 } from './types';
+
+import styles from './TriggerCard.module.css';
+
+const GeographySelector = lazy(() => import('./GeographySelector'));
 
 const optionKeySelector = (option: Option) => option.key;
 const optionLabelSelector = (option: Option) => option.label;
@@ -49,8 +61,15 @@ interface Props {
         geographyTypeLabel: string;
         geographyLabel: string;
         geographyPlaceholder: string;
+        geographyConfirmedTitle: string;
+        geographyConfirmedDescription: string;
         geographyUnverifiedTitle: string;
         geographyUnverifiedDescription: string;
+        geographySelectButtonLabel: string;
+        geographyChangeButtonLabel: string;
+        geographyCloseButtonLabel: string;
+        geographySelectorLoadingTitle: string;
+        geographySelectorLoadingDescription: string;
         forecastSourcesTitle: string;
         forecastSourcesDescription: string;
         sourceNameLabel: string;
@@ -61,13 +80,16 @@ interface Props {
     };
     index: number;
     trigger: TriggerDraft;
+    country: DraftCountry | undefined;
     schema: TriggerBuilderSchema | undefined;
     canRemove: boolean;
+    geographyOpen: boolean;
     onChange: (value: Partial<TriggerDraft>) => void;
     onRemove: () => void;
     onSourceChange: (sourceId: string, value: Partial<ForecastSource>) => void;
     onSourceAdd: () => void;
     onSourceRemove: (sourceId: string) => void;
+    onToggleGeography: () => void;
 }
 
 function TriggerCard(props: Props) {
@@ -75,13 +97,16 @@ function TriggerCard(props: Props) {
         strings,
         index,
         trigger,
+        country,
         schema,
         canRemove,
+        geographyOpen,
         onChange,
         onRemove,
         onSourceChange,
         onSourceAdd,
         onSourceRemove,
+        onToggleGeography,
     } = props;
     const thresholdTypeOptions = includeCurrentOption(
         schema?.primaryVariables ?? [],
@@ -107,6 +132,12 @@ function TriggerCard(props: Props) {
         schema?.geographyTypes ?? [],
         trigger.geographyType,
     );
+    let geographyButtonLabel = strings.geographySelectButtonLabel;
+    if (geographyOpen) {
+        geographyButtonLabel = strings.geographyCloseButtonLabel;
+    } else if (trigger.geographyConfirmed) {
+        geographyButtonLabel = strings.geographyChangeButtonLabel;
+    }
 
     return (
         <Container
@@ -261,50 +292,79 @@ function TriggerCard(props: Props) {
                 <InputSection
                     title={strings.geographyTitle}
                     description={strings.geographyDescription}
-                    numPreferredColumns={2}
+                    withFullWidthContent
                 >
-                    {geographyOptions.length > 0 ? (
-                        <SelectInput
-                            name={undefined}
-                            label={strings.geographyTypeLabel}
-                            value={trigger.geographyType || undefined}
-                            options={geographyOptions}
-                            keySelector={optionKeySelector}
-                            labelSelector={optionLabelSelector}
-                            onChange={(value) => onChange({
-                                geographyType: value ?? '',
-                                geographyConfirmed: value === 'national',
-                            })}
-                        />
-                    ) : (
-                        <TextInput
-                            name={undefined}
-                            label={strings.geographyTypeLabel}
-                            value={trigger.geographyType}
-                            onChange={(value) => onChange({
-                                geographyType: value ?? '',
-                                geographyConfirmed: value === 'national',
-                            })}
-                        />
-                    )}
-                    <TextInput
-                        name={undefined}
-                        label={strings.geographyLabel}
-                        placeholder={strings.geographyPlaceholder}
-                        value={trigger.geographyLabel}
-                        disabled={trigger.geographyType === 'national'}
-                        onChange={(value) => onChange({
-                            geographyLabel: value ?? '',
-                            geographyConfirmed: false,
-                        })}
-                    />
-                    {trigger.geographyType !== 'national' && (
+                    <div className={styles.geographyContent}>
+                        <div className={styles.geographyFields}>
+                            {geographyOptions.length > 0 ? (
+                                <SelectInput
+                                    name={undefined}
+                                    label={strings.geographyTypeLabel}
+                                    value={trigger.geographyType || undefined}
+                                    options={geographyOptions}
+                                    keySelector={optionKeySelector}
+                                    labelSelector={optionLabelSelector}
+                                    onChange={(value) => onChange(
+                                        changeGeographyType(value ?? '', country),
+                                    )}
+                                />
+                            ) : (
+                                <TextInput
+                                    name={undefined}
+                                    label={strings.geographyTypeLabel}
+                                    value={trigger.geographyType}
+                                    onChange={(value) => onChange(
+                                        changeGeographyType(value ?? '', country),
+                                    )}
+                                />
+                            )}
+                            <TextInput
+                                name={undefined}
+                                label={strings.geographyLabel}
+                                placeholder={strings.geographyPlaceholder}
+                                value={trigger.geographyLabel}
+                                onChange={() => undefined}
+                                disabled
+                            />
+                        </div>
                         <Message
-                            title={strings.geographyUnverifiedTitle}
-                            description={strings.geographyUnverifiedDescription}
+                            title={trigger.geographyConfirmed
+                                ? strings.geographyConfirmedTitle
+                                : strings.geographyUnverifiedTitle}
+                            description={trigger.geographyConfirmed
+                                ? strings.geographyConfirmedDescription
+                                : strings.geographyUnverifiedDescription}
                             compact
                         />
-                    )}
+                        {trigger.geographyType !== 'national' && (
+                            <div className={styles.geographyActions}>
+                                <Button
+                                    name={undefined}
+                                    styleVariant={geographyOpen ? 'outline' : 'filled'}
+                                    onClick={onToggleGeography}
+                                >
+                                    {geographyButtonLabel}
+                                </Button>
+                            </div>
+                        )}
+                        {geographyOpen && trigger.geographyType !== 'national' && (
+                            <Suspense
+                                fallback={(
+                                    <Message
+                                        pending
+                                        title={strings.geographySelectorLoadingTitle}
+                                        description={strings.geographySelectorLoadingDescription}
+                                    />
+                                )}
+                            >
+                                <GeographySelector
+                                    country={country}
+                                    trigger={trigger}
+                                    onChange={onChange}
+                                />
+                            </Suspense>
+                        )}
+                    </div>
                 </InputSection>
                 <InputSection
                     title={strings.forecastSourcesTitle}
