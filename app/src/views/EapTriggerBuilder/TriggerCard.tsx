@@ -28,6 +28,7 @@ import type {
     Option,
     TriggerBuilderSchema,
     TriggerDraft,
+    TriggerGenerationErrors,
 } from './types';
 
 import styles from './TriggerCard.module.css';
@@ -77,6 +78,7 @@ interface Props {
         sourceLinkPlaceholder: string;
         removeSourceButtonLabel: string;
         addSourceButtonLabel: string;
+        requiredFieldError: string;
     };
     index: number;
     trigger: TriggerDraft;
@@ -84,6 +86,7 @@ interface Props {
     schema: TriggerBuilderSchema | undefined;
     canRemove: boolean;
     geographyOpen: boolean;
+    errors: TriggerGenerationErrors | undefined;
     onChange: (value: Partial<TriggerDraft>) => void;
     onRemove: () => void;
     onSourceChange: (sourceId: string, value: Partial<ForecastSource>) => void;
@@ -101,6 +104,7 @@ function TriggerCard(props: Props) {
         schema,
         canRemove,
         geographyOpen,
+        errors,
         onChange,
         onRemove,
         onSourceChange,
@@ -172,6 +176,10 @@ function TriggerCard(props: Props) {
                             name={undefined}
                             label={strings.thresholdTypeLabel}
                             placeholder={strings.thresholdTypePlaceholder}
+                            error={errors?.canonicalVariable
+                                ? strings.requiredFieldError
+                                : undefined}
+                            required
                             value={trigger.canonicalVariable || undefined}
                             options={thresholdTypeOptions}
                             keySelector={optionKeySelector}
@@ -187,6 +195,10 @@ function TriggerCard(props: Props) {
                         <TextInput
                             name={undefined}
                             label={strings.thresholdTypeLabel}
+                            error={errors?.canonicalVariable
+                                ? strings.requiredFieldError
+                                : undefined}
+                            required
                             value={trigger.canonicalVariable}
                             onChange={(value) => onChange({ canonicalVariable: value ?? '' })}
                         />
@@ -196,6 +208,10 @@ function TriggerCard(props: Props) {
                             name={undefined}
                             label={strings.measureLabel}
                             placeholder={strings.measurePlaceholder}
+                            error={errors?.subcategory
+                                ? strings.requiredFieldError
+                                : undefined}
+                            required
                             value={trigger.subcategory || undefined}
                             options={measureOptions}
                             keySelector={optionKeySelector}
@@ -206,6 +222,10 @@ function TriggerCard(props: Props) {
                         <TextInput
                             name={undefined}
                             label={strings.measureLabel}
+                            error={errors?.subcategory
+                                ? strings.requiredFieldError
+                                : undefined}
+                            required
                             value={trigger.subcategory}
                             onChange={(value) => onChange({ subcategory: value ?? '' })}
                         />
@@ -215,6 +235,10 @@ function TriggerCard(props: Props) {
                             name={undefined}
                             label={strings.operatorLabel}
                             placeholder={strings.operatorPlaceholder}
+                            error={errors?.operator
+                                ? strings.requiredFieldError
+                                : undefined}
+                            required
                             value={trigger.operator || undefined}
                             options={operatorOptions}
                             keySelector={optionKeySelector}
@@ -225,6 +249,10 @@ function TriggerCard(props: Props) {
                         <TextInput
                             name={undefined}
                             label={strings.operatorLabel}
+                            error={errors?.operator
+                                ? strings.requiredFieldError
+                                : undefined}
+                            required
                             value={trigger.operator}
                             onChange={(value) => onChange({ operator: value ?? '' })}
                         />
@@ -232,6 +260,10 @@ function TriggerCard(props: Props) {
                     <TextInput
                         name={undefined}
                         label={strings.valueLabel}
+                        error={errors?.thresholdValue
+                            ? strings.requiredFieldError
+                            : undefined}
+                        required
                         value={trigger.thresholdValue}
                         onChange={(value) => onChange({ thresholdValue: value ?? '' })}
                     />
@@ -240,6 +272,10 @@ function TriggerCard(props: Props) {
                             name={undefined}
                             label={strings.unitLabel}
                             placeholder={strings.unitPlaceholder}
+                            error={errors?.thresholdUnit
+                                ? strings.requiredFieldError
+                                : undefined}
+                            required
                             value={trigger.thresholdUnit || undefined}
                             options={unitOptions}
                             keySelector={optionKeySelector}
@@ -250,6 +286,10 @@ function TriggerCard(props: Props) {
                         <TextInput
                             name={undefined}
                             label={strings.unitLabel}
+                            error={errors?.thresholdUnit
+                                ? strings.requiredFieldError
+                                : undefined}
+                            required
                             value={trigger.thresholdUnit}
                             onChange={(value) => onChange({ thresholdUnit: value ?? '' })}
                         />
@@ -328,6 +368,7 @@ function TriggerCard(props: Props) {
                             />
                         </div>
                         <Message
+                            variant={errors?.geography ? 'error' : undefined}
                             title={trigger.geographyConfirmed
                                 ? strings.geographyConfirmedTitle
                                 : strings.geographyUnverifiedTitle}

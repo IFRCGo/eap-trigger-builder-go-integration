@@ -32,7 +32,8 @@ provides the real GO navigation and footer.
 - Do not add GO authentication, database persistence, draft, or share endpoints.
 - Keep the new page activation-only: no complexity, pre-activation, stop, title-preview,
   or old AI review workspace.
-- Keep structured form data authoritative and AI output optional and read-only.
+- Keep structured form data authoritative. The Trigger statement is generated through AI,
+  remains editable, and is included in browser save/share data.
 - Never store or share the prototype access code.
 
 ## Runtime configuration
@@ -45,7 +46,8 @@ provides the real GO navigation and footer.
 
 Add `APP_TRIGGER_BUILDER_API_ENDPOINT` through `app/env.ts`, `app/src/config.ts`, Docker,
 Helm, and `nginx-serve/apply-config.sh` using the current runtime substitution pattern.
-Generate and Regenerate send `X-Prototype-Access-Code` from `sessionStorage` only.
+Generate sends `X-Prototype-Access-Code` from `sessionStorage` only. The preserved
+standalone prototype may still use Regenerate; the new GO page does not.
 
 ## Primary commands
 

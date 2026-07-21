@@ -5,8 +5,12 @@ import type {
     PilotExample,
     PilotStatement,
     ReferenceData,
+    TriggerBuilderDraft,
     TriggerBuilderSchema,
 } from './types';
+
+const prototypeAccessStorageKey = 'trigger-builder-prototype.access-code';
+const generationTimeoutMs = 160_000;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -53,6 +57,7 @@ function parseSchema(value: unknown): TriggerBuilderSchema {
 
     const schema = {
         primaryVariables: toOptions(value.lookups.primaryVariables),
+        hazardTypes: toOptions(value.lookups.hazardTypes),
         subcategoriesByVariable: toOptionRecord(value.lookups.subcategoriesByVariable),
         unitsByVariable: toOptionRecord(value.lookups.unitsByVariable),
         operatorsByVariable: toOptionRecord(value.lookups.operatorsByVariable),
@@ -116,17 +121,167 @@ function parseExamples(value: unknown): PilotExample[] {
     });
 }
 
-async function getJson(path: string, signal: AbortSignal): Promise<unknown> {
-    const baseUrl = triggerBuilderApi.endsWith('/')
+function getBaseUrl(): string {
+    return triggerBuilderApi.endsWith('/')
         ? triggerBuilderApi
         : `${triggerBuilderApi}/`;
-    const response = await fetch(new URL(path, baseUrl), { signal });
+}
+
+async function getJson(path: string, signal: AbortSignal): Promise<unknown> {
+    const response = await fetch(new URL(path, getBaseUrl()), { signal });
 
     if (!response.ok) {
         throw new Error(`Trigger Builder API returned ${response.status}.`);
     }
 
     return response.json() as Promise<unknown>;
+}
+
+export class PrototypeAccessError extends Error {
+    constructor() {
+        super('The prototype access code was rejected.');
+        this.name = 'PrototypeAccessError';
+    }
+}
+
+export function getPrototypeAccessCode(): string {
+    try {
+        return sessionStorage.getItem(prototypeAccessStorageKey)?.trim() ?? '';
+    } catch {
+        return '';
+    }
+}
+
+export function setPrototypeAccessCode(value: string): void {
+    try {
+        if (value.trim()) {
+            sessionStorage.setItem(prototypeAccessStorageKey, value.trim());
+        } else {
+            sessionStorage.removeItem(prototypeAccessStorageKey);
+        }
+    } catch {
+        // The code is still used for the current request if session storage is unavailable.
+    }
+}
+
+export function clearPrototypeAccessCode(): void {
+    setPrototypeAccessCode('');
+}
+
+function buildGeneratePayload(draft: TriggerBuilderDraft, hazardTypes: string[]) {
+    const countryName = draft.country?.name ?? '';
+    const eapName = draft.selectedPilotName?.trim()
+        || (countryName ? `${countryName} Full EAP` : 'Full EAP');
+
+    return {
+        documentContext: {
+            countryOrOperationName: countryName,
+            countryId: draft.country?.id,
+            countryIso: draft.country?.iso,
+            countryIso3: draft.country?.iso3,
+            countryName,
+            countryCentroid: draft.country?.centroid,
+            countryBoundingBox: draft.country?.boundingBox,
+            operationTitle: eapName,
+            hazardTypes,
+            eapName,
+            eapVariant: 'Full EAP',
+            versionLabel: 'Trigger Builder',
+            displayTitleOverrideEnabled: false,
+            displayTitleOverride: '',
+            interPhasePreToAct: 'PRECEDES',
+            interPhaseActToStop: 'ENABLES',
+        },
+        statements: draft.triggers.map((trigger) => ({
+            id: trigger.id,
+            phase: 'activation',
+            isFreeText: false,
+            freeTextStatement: '',
+            canonicalVariable: trigger.canonicalVariable,
+            subcategory: trigger.subcategory,
+            operator: trigger.operator,
+            thresholdValue: trigger.thresholdValue,
+            thresholdUnit: trigger.thresholdUnit,
+            probabilityValue: trigger.probabilityValue,
+            leadTimeValue: trigger.leadTimeValue,
+            timeframeUnit: trigger.timeframeUnit,
+            geographyType: trigger.geographyType,
+            geographyLabel: trigger.geographyLabel,
+            geographyFeatureId: trigger.geographyFeatureId,
+            geographyCoordinates: trigger.geographyCoordinates,
+            geographySource: trigger.geographySource,
+            geographyConfirmed: trigger.geographyConfirmed,
+            sourceAuthority: trigger.sources
+                .map((source) => source.name.trim())
+                .filter(Boolean)
+                .join('; '),
+            notes: '',
+            withinConnector: trigger.connectorToNext ?? '',
+            crossConnector: '',
+        })),
+    };
+}
+
+async function postGeneration(
+    draft: TriggerBuilderDraft,
+    hazardTypes: string[],
+    accessCode: string,
+    signal: AbortSignal,
+): Promise<unknown> {
+    const requestController = new AbortController();
+    const abortRequest = () => requestController.abort();
+    if (signal.aborted) {
+        requestController.abort();
+    } else {
+        signal.addEventListener('abort', abortRequest, { once: true });
+    }
+    const timeout = window.setTimeout(abortRequest, generationTimeoutMs);
+
+    let response: Response;
+    try {
+        response = await fetch(new URL('api/trigger-builder/generate', getBaseUrl()), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Prototype-Access-Code': accessCode,
+            },
+            body: JSON.stringify(buildGeneratePayload(draft, hazardTypes)),
+            signal: requestController.signal,
+        });
+    } finally {
+        window.clearTimeout(timeout);
+        signal.removeEventListener('abort', abortRequest);
+    }
+
+    if (response.status === 401 || response.status === 403) {
+        throw new PrototypeAccessError();
+    }
+    if (!response.ok) {
+        throw new Error(`Trigger Builder API returned ${response.status}.`);
+    }
+
+    return response.json() as Promise<unknown>;
+}
+
+export async function generateTriggerStatement(
+    draft: TriggerBuilderDraft,
+    hazardTypes: string[],
+    accessCode: string,
+    signal: AbortSignal,
+): Promise<string> {
+    const response = await postGeneration(draft, hazardTypes, accessCode, signal);
+    if (!isRecord(response) || !isRecord(response.reviewOutput)) {
+        throw new Error('Invalid Trigger Builder generation response.');
+    }
+
+    const activation = toString(response.reviewOutput.activation).trim();
+    const combined = toString(response.reviewOutput.combined).trim();
+    const statement = activation || combined;
+    if (!statement) {
+        throw new Error('Trigger Builder generation returned no activation statement.');
+    }
+
+    return statement;
 }
 
 export default async function getReferenceData(signal: AbortSignal): Promise<ReferenceData> {

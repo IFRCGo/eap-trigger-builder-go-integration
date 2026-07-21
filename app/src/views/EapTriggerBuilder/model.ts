@@ -10,18 +10,16 @@ import type {
     TriggerBuilderDraft,
     TriggerConnector,
     TriggerDraft,
+    TriggerGenerationErrors,
 } from './types';
 
 const supportedConnectors = new Set<TriggerConnector>(['THEN', 'OR', 'AND']);
 
-const operatorLabels: Record<string, string> = {
-    '>=': 'greater than or equal to',
-    '>': 'greater than',
-    '<=': 'less than or equal to',
-    '<': 'less than',
-    '==': 'equal to',
-    reduction: 'reduced to',
-};
+interface GenerationValidationErrors {
+    country: boolean;
+    triggers: Record<string, TriggerGenerationErrors>;
+    connectors: Set<string>;
+}
 
 function createId(prefix: string): string {
     return `${prefix}-${crypto.randomUUID()}`;
@@ -71,6 +69,7 @@ export function createBlankDraft(country?: DraftCountry): TriggerBuilderDraft {
         triggers: [createBlankTrigger(country)],
         importedConnectorWarning: false,
         aiStatement: undefined,
+        aiGeneratedAt: undefined,
     };
 }
 
@@ -131,6 +130,7 @@ export function createPilotDraft(
         triggers: triggers.length > 0 ? triggers : [createBlankTrigger(country)],
         importedConnectorWarning,
         aiStatement: undefined,
+        aiGeneratedAt: undefined,
     };
 }
 
@@ -307,93 +307,36 @@ export function hasCompleteConnectors(triggers: TriggerDraft[]): boolean {
     ));
 }
 
-function describeOperator(operator: string): string {
-    return operatorLabels[operator] ?? operator.replace(/[_-]+/g, ' ');
-}
+export function getGenerationValidationErrors(
+    draft: TriggerBuilderDraft,
+): GenerationValidationErrors | undefined {
+    const triggers: Record<string, TriggerGenerationErrors> = {};
+    const connectors = new Set<string>();
 
-export function formatTriggerClause(trigger: TriggerDraft): string {
-    const thresholdType = trigger.canonicalVariable.trim();
-    const measure = trigger.subcategory.trim();
-    const operator = trigger.operator.trim();
-    const value = trigger.thresholdValue.trim();
-    const unit = trigger.thresholdUnit.trim();
-    const timeframe = trigger.timeframeUnit.trim();
-    const probability = Number.isFinite(trigger.probabilityValue)
-        ? trigger.probabilityValue
-        : undefined;
-    const leadTime = Number.isFinite(trigger.leadTimeValue)
-        ? trigger.leadTimeValue
-        : undefined;
-
-    const subject = measure
-        ? `${measure}${thresholdType ? ` (${thresholdType})` : ''}`
-        : thresholdType;
-    const comparison = [
-        operator ? describeOperator(operator) : '',
-        value,
-        (operator || value) ? unit : '',
-    ].filter(Boolean).join(' ');
-    const condition = subject && comparison
-        ? `${subject} is ${comparison}`
-        : subject || comparison;
-
-    if (!condition && probability === undefined && leadTime === undefined) {
-        return '';
-    }
-
-    const geography = trigger.geographyConfirmed
-        ? trigger.geographyLabel.trim()
-        : '';
-    let clause = `Trigger an alert${geography ? ` for ${geography}` : ''}`;
-
-    if (condition) {
-        clause += ` when ${condition}`;
-    }
-    if (probability !== undefined) {
-        clause += `${condition ? ',' : ''} with a probability of ${probability}% or higher`;
-    }
-    if (leadTime !== undefined) {
-        const separator = condition || probability !== undefined ? ', and' : ' with';
-        clause += `${separator} a lead time of ${leadTime}${timeframe ? ` ${timeframe}` : ''}`;
-    }
-
-    return clause;
-}
-
-export function formatDeterministicStatement(triggers: TriggerDraft[]): string {
-    let statement = '';
-    let previousTriggerIndex: number | undefined;
-
-    triggers.forEach((trigger, index) => {
-        const clause = formatTriggerClause(trigger);
-        if (!clause) {
-            return;
+    draft.triggers.forEach((trigger, index) => {
+        const errors: TriggerGenerationErrors = {
+            canonicalVariable: !trigger.canonicalVariable.trim(),
+            subcategory: !trigger.subcategory.trim(),
+            operator: !trigger.operator.trim(),
+            thresholdValue: !trigger.thresholdValue.trim(),
+            thresholdUnit: !trigger.thresholdUnit.trim(),
+            geography: trigger.geographyType !== 'national'
+                && !trigger.geographyConfirmed,
+        };
+        if (Object.values(errors).some(Boolean)) {
+            triggers[trigger.id] = errors;
         }
-
-        if (!statement) {
-            statement = clause;
-            previousTriggerIndex = index;
-            return;
+        if (index < draft.triggers.length - 1 && !trigger.connectorToNext) {
+            connectors.add(trigger.id);
         }
-
-        const connector = previousTriggerIndex === index - 1
-            ? triggers[previousTriggerIndex]?.connectorToNext
-            : undefined;
-        const continuedClause = clause.replace(/^Trigger/, 'trigger');
-
-        if (connector === 'THEN') {
-            statement += `. Then ${continuedClause}`;
-        } else if (connector === 'OR') {
-            statement += `, or ${continuedClause}`;
-        } else if (connector === 'AND') {
-            statement += `, and ${continuedClause}`;
-        } else {
-            statement += `. ${clause}`;
-        }
-        previousTriggerIndex = index;
     });
 
-    return statement ? `${statement}.` : '';
+    const country = !draft.country;
+    if (!country && Object.keys(triggers).length === 0 && connectors.size === 0) {
+        return undefined;
+    }
+
+    return { country, triggers, connectors };
 }
 
 export function getDraftFingerprint(draft: TriggerBuilderDraft): string {
@@ -429,5 +372,7 @@ export function getDraftFingerprint(draft: TriggerBuilderDraft): string {
             })),
             connectorToNext: trigger.connectorToNext ?? null,
         })),
+        aiStatement: draft.aiStatement ?? null,
+        aiGeneratedAt: draft.aiGeneratedAt ?? null,
     });
 }

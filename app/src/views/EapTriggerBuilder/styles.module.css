@@ -1,9 +1,0 @@
-.statementPreview {
-    display: block;
-    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
-    border-radius: var(--go-ui-border-radius-md);
-    background-color: var(--go-ui-color-background);
-    padding: var(--go-ui-spacing-md);
-    min-height: 4rem;
-    white-space: pre-wrap;
-}

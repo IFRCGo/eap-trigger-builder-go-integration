@@ -1,0 +1,86 @@
+{
+    "parent": "000088-1784563996710.json",
+    "actions": [
+        {
+            "action": "add",
+            "key": "cancelConfirmMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "Discard unsaved changes and restore the last saved draft?"
+        },
+        {
+            "action": "add",
+            "key": "cancelSuccessMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "Unsaved changes were discarded."
+        },
+        {
+            "action": "add",
+            "key": "draftSaveErrorMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "The draft could not be saved in this browser. Your form is still open."
+        },
+        {
+            "action": "add",
+            "key": "draftSaveSuccessMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "The draft was saved in this browser."
+        },
+        {
+            "action": "add",
+            "key": "savedDraftInvalidMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "The saved browser draft could not be read and was reset. A blank form is ready."
+        },
+        {
+            "action": "add",
+            "key": "shareClipboardSuccessMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "The draft JSON was copied to the clipboard."
+        },
+        {
+            "action": "add",
+            "key": "shareDocumentTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "EAP Trigger Builder draft"
+        },
+        {
+            "action": "add",
+            "key": "shareDownloadSuccessMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "The draft was downloaded as a JSON file."
+        },
+        {
+            "action": "add",
+            "key": "shareErrorMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "The draft could not be shared in this browser."
+        },
+        {
+            "action": "add",
+            "key": "shareWebSuccessMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "The draft was shared as a JSON file."
+        },
+        {
+            "action": "add",
+            "key": "storageUnavailableMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "Browser storage is unavailable. You can continue editing, but Save and close cannot store this draft."
+        },
+        {
+            "action": "remove",
+            "key": "deterministicStatementDescription",
+            "namespace": "eapTriggerBuilder"
+        },
+        {
+            "action": "remove",
+            "key": "deterministicStatementEmpty",
+            "namespace": "eapTriggerBuilder"
+        },
+        {
+            "action": "remove",
+            "key": "deterministicStatementTitle",
+            "namespace": "eapTriggerBuilder"
+        }
+    ]
+}

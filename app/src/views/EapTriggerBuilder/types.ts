@@ -5,6 +5,7 @@ export interface Option {
 
 export interface TriggerBuilderSchema {
     primaryVariables: Option[];
+    hazardTypes: Option[];
     subcategoriesByVariable: Record<string, Option[]>;
     unitsByVariable: Record<string, Option[]>;
     operatorsByVariable: Record<string, Option[]>;
@@ -97,6 +98,15 @@ export interface TriggerDraft {
     connectorToNext: TriggerConnector | undefined;
 }
 
+export interface TriggerGenerationErrors {
+    canonicalVariable?: boolean;
+    subcategory?: boolean;
+    operator?: boolean;
+    thresholdValue?: boolean;
+    thresholdUnit?: boolean;
+    geography?: boolean;
+}
+
 export interface TriggerBuilderDraft {
     selectedPilotId: string | undefined;
     selectedPilotName: string | undefined;
@@ -104,6 +114,7 @@ export interface TriggerBuilderDraft {
     triggers: TriggerDraft[];
     importedConnectorWarning: boolean;
     aiStatement: string | undefined;
+    aiGeneratedAt?: string;
 }
 
 export interface ConfirmedGeographyPayload extends GeographySelection {

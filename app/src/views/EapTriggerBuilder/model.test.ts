@@ -11,10 +11,9 @@ import {
     createBlankTrigger,
     createPilotDraft,
     findPilotCountry,
-    formatDeterministicStatement,
-    formatTriggerClause,
     getConfirmedGeographyPayload,
     getDraftFingerprint,
+    getGenerationValidationErrors,
     removeSource,
     removeTrigger,
     toDraftCountry,
@@ -232,92 +231,24 @@ describe('EAP Trigger Builder model', () => {
         expect(restored.triggers[0]?.geographyConfirmed).toBe(true);
     });
 
-    test('formats a complete trigger clause', () => {
-        const trigger = {
-            ...createBlankTrigger(malawiCountry),
-            canonicalVariable: 'Precipitation',
-            subcategory: 'Total rainfall',
-            operator: '>=',
-            thresholdValue: '50',
-            thresholdUnit: 'mm',
-            probabilityValue: 70,
-            leadTimeValue: 24,
-            timeframeUnit: 'hours',
-        };
-
-        expect(formatTriggerClause(trigger)).toBe(
-            'Trigger an alert for Malawi when Total rainfall (Precipitation) is greater than or equal to 50 mm, with a probability of 70% or higher, and a lead time of 24 hours',
-        );
-    });
-
-    test('omits missing optional trigger fragments', () => {
-        const trigger = {
-            ...createBlankTrigger(),
-            subcategory: 'Total rainfall',
-            operator: '>',
-            thresholdValue: '50',
-        };
-
-        expect(formatDeterministicStatement([trigger])).toBe(
-            'Trigger an alert when Total rainfall is greater than 50.',
-        );
-    });
-
-    test('joins multiple triggers in form order with connector meanings', () => {
-        const first = {
-            ...createBlankTrigger(),
-            canonicalVariable: 'Rainfall',
-            thresholdValue: '50',
-            thresholdUnit: 'mm',
-            connectorToNext: 'THEN' as const,
-        };
-        const second = {
-            ...createBlankTrigger(),
-            canonicalVariable: 'River level',
-            thresholdValue: '4',
-            thresholdUnit: 'm',
-            connectorToNext: 'OR' as const,
-        };
-        const third = {
-            ...createBlankTrigger(),
-            canonicalVariable: 'Wind speed',
-            thresholdValue: '80',
-            thresholdUnit: 'km/h',
-        };
-
-        expect(formatDeterministicStatement([first, second, third])).toBe(
-            'Trigger an alert when Rainfall is 50 mm. Then trigger an alert when River level is 4 m, or trigger an alert when Wind speed is 80 km/h.',
-        );
-    });
-
-    test('handles zero values and empty triggers without placeholders', () => {
-        const trigger = {
-            ...createBlankTrigger(),
-            canonicalVariable: 'Forecast probability',
-            probabilityValue: 0,
-            leadTimeValue: 0,
-        };
-        const statement = formatDeterministicStatement([createBlankTrigger(), trigger]);
-
-        expect(statement).toBe(
-            'Trigger an alert when Forecast probability, with a probability of 0% or higher, and a lead time of 0.',
-        );
-        expect(statement).not.toContain('undefined');
-        expect(formatDeterministicStatement([createBlankTrigger()])).toBe('');
-    });
-
-    test('fingerprints meaningful draft data without random ids or AI output', () => {
+    test('fingerprints meaningful draft data without random ids and includes AI output', () => {
         const firstDraft = createBlankDraft(malawiCountry);
-        const secondDraft = {
+        const sameDraftWithDifferentIds = createBlankDraft(malawiCountry);
+        const draftWithAiStatement = {
             ...createBlankDraft(malawiCountry),
-            aiStatement: 'A stale AI result',
+            aiStatement: 'An edited AI statement',
         };
 
-        expect(getDraftFingerprint(firstDraft)).toBe(getDraftFingerprint(secondDraft));
+        expect(getDraftFingerprint(firstDraft)).toBe(
+            getDraftFingerprint(sameDraftWithDifferentIds),
+        );
+        expect(getDraftFingerprint(firstDraft)).not.toBe(
+            getDraftFingerprint(draftWithAiStatement),
+        );
 
         const changedDraft = {
-            ...secondDraft,
-            triggers: secondDraft.triggers.map((trigger, index) => (
+            ...firstDraft,
+            triggers: firstDraft.triggers.map((trigger, index) => (
                 index === 0
                     ? {
                         ...trigger,
@@ -331,5 +262,49 @@ describe('EAP Trigger Builder model', () => {
             )),
         };
         expect(getDraftFingerprint(firstDraft)).not.toBe(getDraftFingerprint(changedDraft));
+    });
+
+    test('validates required trigger fields, geography, country, and connectors', () => {
+        const blankDraft = createBlankDraft();
+        const blankErrors = getGenerationValidationErrors(blankDraft);
+        expect(blankErrors?.country).toBe(true);
+        expect(blankErrors?.triggers[blankDraft.triggers[0]!.id]).toMatchObject({
+            canonicalVariable: true,
+            subcategory: true,
+            operator: true,
+            thresholdValue: true,
+            thresholdUnit: true,
+        });
+
+        const firstTrigger = {
+            ...createBlankTrigger(malawiCountry),
+            canonicalVariable: 'Precipitation',
+            subcategory: 'Total rainfall',
+            operator: '>=',
+            thresholdValue: '50',
+            thresholdUnit: 'mm',
+        };
+        const secondTrigger = {
+            ...firstTrigger,
+            id: 'second-trigger',
+            geographyType: 'regional',
+            geographyLabel: 'Southern Region',
+            geographyConfirmed: false,
+        };
+        const incompleteDraft = {
+            ...createBlankDraft(malawiCountry),
+            triggers: [firstTrigger, secondTrigger],
+        };
+        const incompleteErrors = getGenerationValidationErrors(incompleteDraft);
+        expect(incompleteErrors?.connectors.has(firstTrigger.id)).toBe(true);
+        expect(incompleteErrors?.triggers[secondTrigger.id]?.geography).toBe(true);
+
+        expect(getGenerationValidationErrors({
+            ...incompleteDraft,
+            triggers: [
+                { ...firstTrigger, connectorToNext: 'AND' },
+                { ...secondTrigger, geographyConfirmed: true },
+            ],
+        })).toBeUndefined();
     });
 });
