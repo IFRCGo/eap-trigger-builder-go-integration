@@ -37,6 +37,9 @@ importers:
       '@ifrc-go/ui':
         specifier: workspace:^
         version: link:../packages/ui
+      '@mapbox/search-js-core':
+        specifier: 1.5.1
+        version: 1.5.1
       '@sentry/react':
         specifier: ^10.0.0
         version: 10.47.0(react@19.2.4)

@@ -145,5 +145,11 @@ deploy/eb/
 Dockerfile
 .dockerignore
 
-# git
+# The production build reads the current Git revision in vite.config.ts.
 .gitignore
+
+# Local analysis and nested repositories are not part of the web build.
+.graphify
+go-api
+go-risk-module-api
+cacheppuccino

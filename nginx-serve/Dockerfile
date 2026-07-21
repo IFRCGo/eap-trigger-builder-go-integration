@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1-labs
 
 # -------------------------- Dev ---------------------------------------
-FROM node:20-bookworm AS dev
+FROM node:22.23.1-bookworm AS dev
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -50,6 +50,8 @@ LABEL maintainer="IFRC"
 LABEL org.opencontainers.image.source="https://github.com/IFRCGo/go-web-app"
 
 COPY ./nginx-serve/apply-config.sh /docker-entrypoint.d/
+RUN sed -i 's/\r$//' /docker-entrypoint.d/apply-config.sh \
+    && chmod +x /docker-entrypoint.d/apply-config.sh
 COPY ./nginx-serve/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=nginx-build /code/build /code/build
 

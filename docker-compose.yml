@@ -6,19 +6,51 @@ services:
     image: ifrcgo/go-web-app:local
     ports:
       - "3000:80"
+    depends_on:
+      trigger-builder-backend:
+        condition: service_healthy
     environment:
       APP_TITLE: ${APP_TITLE:-IFRC GO}
       APP_ENVIRONMENT: ${APP_ENVIRONMENT:-development}
-      APP_MAPBOX_ACCESS_TOKEN: ${APP_MAPBOX_ACCESS_TOKEN:-APP_MAPBOX_ACCESS_TOKEN_PLACEHOLDER}
+      APP_MAPBOX_ACCESS_TOKEN: ${APP_MAPBOX_ACCESS_TOKEN:-}
       APP_TINY_API_KEY: ${APP_TINY_API_KEY:-APP_TINY_API_KEY_PLACEHOLDER}
-      APP_API_ENDPOINT: ${APP_API_ENDPOINT:-http://host.docker.internal:8000/}
-      APP_TRIGGER_BUILDER_API_ENDPOINT: ${APP_TRIGGER_BUILDER_API_ENDPOINT:-http://host.docker.internal:8000/}
-      APP_TRANSLATION_API_ENDPOINT: ${APP_TRANSLATION_API_ENDPOINT:-https://APP-TRANSLATION-API-ENDPOINT-PLACEHOLDER.COM/}
-      APP_RISK_API_ENDPOINT: ${APP_RISK_API_ENDPOINT:-https://APP-RISK-API-ENDPOINT-PLACEHOLDER.COM/}
+      APP_API_ENDPOINT: ${APP_API_ENDPOINT:-https://goadmin-stage.ifrc.org/}
+      APP_TRIGGER_BUILDER_API_ENDPOINT: ${APP_TRIGGER_BUILDER_API_ENDPOINT:-http://127.0.0.1:8000/}
+      APP_TRANSLATION_API_ENDPOINT: ${APP_TRANSLATION_API_ENDPOINT:-https://cacheppuccino-stage.ifrc.org/}
+      APP_RISK_API_ENDPOINT: ${APP_RISK_API_ENDPOINT:-https://go-risk-api-stage.ifrc.org/}
       APP_SDT_URL: ${APP_SDT_URL:-https://APP-SDT-URL-PLACEHOLDER.COM/}
       APP_SENTRY_DSN: ${APP_SENTRY_DSN:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  trigger-builder-backend:
+    build:
+      context: ..
+      dockerfile: go-api/trigger_builder_standalone/Dockerfile
+    image: ifrcgo/trigger-builder-backend:local
+    ports:
+      - "8000:8080"
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-local-docker-only-not-for-deployment}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000,http://localhost:3101,http://127.0.0.1:3101}
+      PROTOTYPE_ACCESS_REQUIRED: ${PROTOTYPE_ACCESS_REQUIRED:-false}
+      PROTOTYPE_ACCESS_CODE: ${PROTOTYPE_ACCESS_CODE:-}
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID:-eap-form-prototype}
+      GCP_LOCATION: ${GCP_LOCATION:-global}
+      GEMINI_MODEL_ID: ${GEMINI_MODEL_ID:-gemini-3.5-flash}
+      GEMINI_PROMPT_VERSION: ${GEMINI_PROMPT_VERSION:-phase1-v1}
+      GEMINI_REQUEST_TIMEOUT_SECONDS: ${GEMINI_REQUEST_TIMEOUT_SECONDS:-150}
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/trigger-builder/schema', timeout=5)
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
 
   trigger-builder-prototype:
     build:
@@ -27,5 +59,13 @@ services:
     image: ifrcgo/trigger-builder-prototype:local
     ports:
       - "3101:80"
+    depends_on:
+      trigger-builder-backend:
+        condition: service_healthy
+    environment:
+      PORT: ${PROTOTYPE_PORT:-80}
+      API_BASE_URL: ${PROTOTYPE_API_BASE_URL:-http://127.0.0.1:8000}
+      GO_API_BASE_URL: ${PROTOTYPE_GO_API_BASE_URL:-https://goadmin.ifrc.org/api/v2}
+      MAPBOX_TOKEN: ${APP_MAPBOX_ACCESS_TOKEN:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"

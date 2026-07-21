@@ -33,5 +33,6 @@ COPY ./go-web-app/packages/trigger-builder-prototype/nginx-serve/nginx.conf.temp
 # can be injected at `docker run` time without rebuilding the image.
 COPY ./go-web-app/packages/trigger-builder-prototype/nginx-serve/40-env-config.sh /docker-entrypoint.d/40-env-config.sh
 RUN apk add --no-cache jq \
+    && sed -i 's/\r$//' /docker-entrypoint.d/40-env-config.sh \
     && chmod +x /docker-entrypoint.d/40-env-config.sh
 COPY --from=nginx-build /code/go-web-app/packages/trigger-builder-prototype/dist /usr/share/nginx/html
