@@ -41,13 +41,14 @@ const baseStatement: PilotStatement = {
     thresholdValue: '50',
     thresholdUnit: 'mm',
     probabilityValue: 70,
-    leadTimeValue: 24,
+    leadTimeValue: '3-5',
     timeframeUnit: 'hours',
     geographyType: 'national',
     geographyLabel: '',
     withinConnector: '',
     crossConnector: '',
     sourceAuthority: 'National weather service',
+    generationNotes: 'Lake Chilwa Basin: 150 mm',
 };
 
 describe('EAP Trigger Builder model', () => {
@@ -74,7 +75,10 @@ describe('EAP Trigger Builder model', () => {
         expect(draft.selectedPilotName).toBe(example.documentName);
         expect(draft.triggers).toHaveLength(2);
         expect(draft.triggers[0]?.connectorToNext).toBe('THEN');
+        expect(draft.triggers[0]?.leadTimeValue).toBe('3-5');
+        expect(draft.triggers[0]?.generationNotes).toBe('Lake Chilwa Basin: 150 mm');
         expect(draft.triggers[0]?.sources[0]?.name).toBe('National weather service');
+        expect(draft.triggers[1]?.geographySource).toBe('pilot_document');
         expect(draft.triggers[1]?.geographyConfirmed).toBe(false);
         expect(draft.importedConnectorWarning).toBe(false);
     });
@@ -171,14 +175,29 @@ describe('EAP Trigger Builder model', () => {
         });
     });
 
-    test('rejects typed or imported text until a structured selection is confirmed', () => {
+    test('accepts explicitly confirmed document geography without requiring coordinates', () => {
         const trigger = {
             ...createBlankTrigger(malawiCountry),
             ...changeGeographyType('station_gauge', malawiCountry),
             geographyLabel: 'Typed but not selected',
+            geographySource: 'pilot_document' as const,
         };
 
         expect(getConfirmedGeographyPayload(trigger, malawiCountry)).toBeUndefined();
+
+        const confirmedDocumentTrigger = {
+            ...trigger,
+            geographyLabel: 'Five document-defined catchments',
+            geographyConfirmed: true,
+        };
+        expect(getConfirmedGeographyPayload(confirmedDocumentTrigger, malawiCountry)).toEqual({
+            geographyType: 'station_gauge',
+            geographyLabel: 'Five document-defined catchments',
+            geographyFeatureId: undefined,
+            geographyCoordinates: undefined,
+            geographySource: 'pilot_document',
+            geographyConfirmed: true,
+        });
 
         const confirmedTrigger = {
             ...trigger,
@@ -262,6 +281,18 @@ describe('EAP Trigger Builder model', () => {
             )),
         };
         expect(getDraftFingerprint(firstDraft)).not.toBe(getDraftFingerprint(changedDraft));
+
+        const draftWithGenerationNotes = {
+            ...firstDraft,
+            triggers: firstDraft.triggers.map((trigger, index) => (
+                index === 0
+                    ? { ...trigger, generationNotes: 'Lake Chilwa Basin: 150 mm' }
+                    : trigger
+            )),
+        };
+        expect(getDraftFingerprint(firstDraft)).not.toBe(
+            getDraftFingerprint(draftWithGenerationNotes),
+        );
     });
 
     test('validates required trigger fields, geography, country, and connectors', () => {

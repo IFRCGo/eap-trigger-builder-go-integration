@@ -234,6 +234,22 @@ function parseCsv(rawText) {
     return rows;
 }
 
+function normalizeLeadTimeValue(rawLeadTime, timeframeUnit, fallbackValue) {
+    const leadTime = String(rawLeadTime ?? '').trim();
+    const unit = String(timeframeUnit ?? '').trim();
+    const valueWithoutUnit = unit && leadTime.toLowerCase().endsWith(` ${unit.toLowerCase()}`)
+        ? leadTime.slice(0, -unit.length).trim()
+        : '';
+
+    if (/^\d+(?:\s*(?:-|to)\s*\d+)?$/i.test(valueWithoutUnit)) {
+        return valueWithoutUnit
+            .replace(/\s*to\s*/i, '-')
+            .replace(/\s*-\s*/, '-');
+    }
+
+    return String(fallbackValue ?? '').trim();
+}
+
 function writePilotStatements() {
     if (!existsSync(thresholdsSource)) {
         throw new Error(`Missing implementation input: ${thresholdsSource}`);
@@ -254,11 +270,13 @@ function writePilotStatements() {
     const thresholdValueIdx = headers.indexOf('threshold_value');
     const thresholdUnitIdx = headers.indexOf('threshold_unit');
     const probabilityValueIdx = headers.indexOf('probability_value');
+    const leadTimeIdx = headers.indexOf('lead_time');
     const leadTimeValueIdx = headers.indexOf('lead_time_value');
     const timeframeUnitIdx = headers.indexOf('timeframe_unit');
     const geographicScopeTypeIdx = headers.indexOf('geographic_scope_type');
     const geographicScopeLabelIdx = headers.indexOf('geographic_scope_label');
     const notesIdx = headers.indexOf('notes');
+    const generationNotesIdx = headers.indexOf('generation_notes');
     const sourceAuthorityIdx = headers.indexOf('source_authority');
     const crossConnectorIdx = headers.indexOf('cross_statement_connector');
     const withinConnectorIdx = headers.indexOf('within_statement_connector');
@@ -280,7 +298,12 @@ function writePilotStatements() {
         }
 
         const probabilityValue = parseFloat(row[probabilityValueIdx]);
-        const leadTimeValue = parseFloat(row[leadTimeValueIdx]);
+        const timeframeUnit = row[timeframeUnitIdx] || '';
+        const leadTimeValue = normalizeLeadTimeValue(
+            row[leadTimeIdx],
+            timeframeUnit,
+            row[leadTimeValueIdx],
+        );
 
         statementsByDoc[docId].push({
             id: `${docId}-${row[statementKeyIdx]}-${row[statementOrderIdx] || 0}-${row[thresholdIndexIdx] ?? 0}`,
@@ -291,11 +314,14 @@ function writePilotStatements() {
             thresholdValue: row[thresholdValueIdx] || '',
             thresholdUnit: row[thresholdUnitIdx] || '',
             probabilityValue: isNaN(probabilityValue) ? undefined : probabilityValue,
-            leadTimeValue: isNaN(leadTimeValue) ? undefined : leadTimeValue,
-            timeframeUnit: row[timeframeUnitIdx] || '',
+            leadTimeValue: leadTimeValue || undefined,
+            timeframeUnit,
             geographyType: row[geographicScopeTypeIdx] || 'national',
             geographyLabel: row[geographicScopeLabelIdx] || '',
             notes: row[notesIdx] || '',
+            generationNotes: generationNotesIdx >= 0
+                ? row[generationNotesIdx] || ''
+                : '',
             withinConnector: row[withinConnectorIdx] || undefined,
             crossConnector: row[crossConnectorIdx] || undefined,
             sourceAuthority: row[sourceAuthorityIdx] || '',

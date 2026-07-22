@@ -36,6 +36,7 @@ const geographySources = new Set<GeographySource>([
     'mapbox_search',
     'mapbox_pin',
     'pilot_geocoded',
+    'pilot_document',
 ]);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -56,6 +57,10 @@ function isFiniteNumber(value: unknown): value is number {
 
 function isOptionalFiniteNumber(value: unknown): value is number | undefined {
     return value === undefined || isFiniteNumber(value);
+}
+
+function isOptionalLeadTimeValue(value: unknown): value is string | number | undefined {
+    return value === undefined || isString(value) || isFiniteNumber(value);
 }
 
 function isCoordinates(value: unknown): value is GeographyCoordinates {
@@ -102,10 +107,11 @@ function isTrigger(value: unknown): value is TriggerDraft {
         && isString(value.thresholdValue)
         && isString(value.thresholdUnit)
         && isOptionalFiniteNumber(value.probabilityValue)
-        && isOptionalFiniteNumber(value.leadTimeValue)
+        && isOptionalLeadTimeValue(value.leadTimeValue)
         && isString(value.timeframeUnit)
         && isString(value.geographyType)
         && isString(value.geographyLabel)
+        && isOptionalString(value.generationNotes)
         && isOptionalString(value.geographyFeatureId)
         && isOptionalCoordinates(value.geographyCoordinates)
         && (
@@ -172,6 +178,7 @@ function copyDraft(draft: TriggerBuilderDraft): TriggerBuilderDraft {
             geographyCoordinates: copyCoordinates(trigger.geographyCoordinates),
             geographySource: trigger.geographySource,
             geographyConfirmed: trigger.geographyConfirmed,
+            generationNotes: trigger.generationNotes ?? '',
             sources: trigger.sources.map((source) => ({ ...source })),
             connectorToNext: trigger.connectorToNext,
         })),

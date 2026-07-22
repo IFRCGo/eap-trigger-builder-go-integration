@@ -1,5 +1,6 @@
 import { triggerBuilderApi } from '#config';
 
+import IncompleteGenerationError from './IncompleteGenerationError';
 import type {
     Option,
     PilotExample,
@@ -22,6 +23,13 @@ function toString(value: unknown): string {
 
 function toNumber(value: unknown): number | undefined {
     return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+function toLeadTimeValue(value: unknown): string | number | undefined {
+    if (typeof value === 'string') {
+        return value;
+    }
+    return toNumber(value);
 }
 
 function toOptions(value: unknown): Option[] {
@@ -85,13 +93,14 @@ function parseStatement(value: unknown): PilotStatement | undefined {
         thresholdValue: toString(value.thresholdValue),
         thresholdUnit: toString(value.thresholdUnit),
         probabilityValue: toNumber(value.probabilityValue),
-        leadTimeValue: toNumber(value.leadTimeValue),
+        leadTimeValue: toLeadTimeValue(value.leadTimeValue),
         timeframeUnit: toString(value.timeframeUnit),
         geographyType: toString(value.geographyType),
         geographyLabel: toString(value.geographyLabel),
         withinConnector: toString(value.withinConnector),
         crossConnector: toString(value.crossConnector),
         sourceAuthority: toString(value.sourceAuthority),
+        generationNotes: toString(value.generationNotes),
     };
 }
 
@@ -143,6 +152,8 @@ export class PrototypeAccessError extends Error {
         this.name = 'PrototypeAccessError';
     }
 }
+
+export { IncompleteGenerationError };
 
 export function getPrototypeAccessCode(): string {
     try {
@@ -215,11 +226,60 @@ function buildGeneratePayload(draft: TriggerBuilderDraft, hazardTypes: string[])
                 .map((source) => source.name.trim())
                 .filter(Boolean)
                 .join('; '),
-            notes: '',
+            notes: trigger.generationNotes?.trim() ?? '',
             withinConnector: trigger.connectorToNext ?? '',
             crossConnector: '',
         })),
     };
+}
+
+function normalizeFactText(value: string): string {
+    return value
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLocaleLowerCase()
+        .replace(/[^a-z0-9%]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function getRequiredGenerationFacts(draft: TriggerBuilderDraft): string[] {
+    return draft.triggers.flatMap((trigger) => (
+        (trigger.generationNotes ?? '')
+            .split(/[;\r\n]+/)
+            .map((fact) => fact.trim())
+            .filter(Boolean)
+    ));
+}
+
+function hasRequiredGenerationFact(statement: string, fact: string): boolean {
+    const normalizedStatement = normalizeFactText(statement);
+    const separatorIndex = fact.indexOf(':');
+    if (separatorIndex < 0) {
+        return normalizedStatement.includes(normalizeFactText(fact));
+    }
+
+    const label = normalizeFactText(fact.slice(0, separatorIndex));
+    const value = normalizeFactText(fact.slice(separatorIndex + 1));
+    if (!label || !value) {
+        return normalizedStatement.includes(normalizeFactText(fact));
+    }
+
+    const escapedLabel = escapeRegExp(label);
+    const escapedValue = escapeRegExp(value);
+    const shortLink = '(?: [a-z0-9%]+){0,6} ';
+    const labelThenValue = new RegExp(
+        `(?:^| )${escapedLabel}${shortLink}${escapedValue}(?: |$)`,
+    );
+    const valueThenLabel = new RegExp(
+        `(?:^| )${escapedValue}${shortLink}${escapedLabel}(?: |$)`,
+    );
+
+    return labelThenValue.test(normalizedStatement) || valueThenLabel.test(normalizedStatement);
 }
 
 async function postGeneration(
@@ -279,6 +339,13 @@ export async function generateTriggerStatement(
     const statement = activation || combined;
     if (!statement) {
         throw new Error('Trigger Builder generation returned no activation statement.');
+    }
+
+    const missingFacts = getRequiredGenerationFacts(draft).filter(
+        (fact) => !hasRequiredGenerationFact(statement, fact),
+    );
+    if (missingFacts.length > 0) {
+        throw new IncompleteGenerationError(missingFacts);
     }
 
     return statement;

@@ -287,15 +287,15 @@ vi.mock('./TriggerCard', async () => {
     };
 });
 
-vi.mock('./api', () => {
-    class MockPrototypeAccessError extends Error {}
-
+vi.mock('./api', async () => {
+    const actual = await vi.importActual<typeof import('./api')>('./api');
     return {
         clearPrototypeAccessCode: mocks.clearAccessCode,
         default: mocks.getReferenceData,
         generateTriggerStatement: mocks.generate,
         getPrototypeAccessCode: mocks.getAccessCode,
-        PrototypeAccessError: MockPrototypeAccessError,
+        IncompleteGenerationError: actual.IncompleteGenerationError,
+        PrototypeAccessError: actual.PrototypeAccessError,
         setPrototypeAccessCode: mocks.setAccessCode,
     };
 });

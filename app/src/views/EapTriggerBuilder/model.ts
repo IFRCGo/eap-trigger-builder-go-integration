@@ -56,6 +56,7 @@ export function createBlankTrigger(country?: DraftCountry): TriggerDraft {
         timeframeUnit: '',
         geographyType: 'national',
         ...getNationalGeography(country),
+        generationNotes: '',
         sources: [createBlankSource()],
         connectorToNext: undefined,
     };
@@ -111,8 +112,9 @@ export function createPilotDraft(
             geographyLabel: nationalGeography?.geographyLabel ?? statement.geographyLabel,
             geographyFeatureId: nationalGeography?.geographyFeatureId,
             geographyCoordinates: nationalGeography?.geographyCoordinates,
-            geographySource: geographyType === 'national' ? undefined : 'pilot_geocoded',
+            geographySource: geographyType === 'national' ? undefined : 'pilot_document',
             geographyConfirmed: nationalGeography?.geographyConfirmed ?? false,
+            generationNotes: statement.generationNotes ?? '',
             sources: [{
                 ...createBlankSource(),
                 name: statement.sourceAuthority,
@@ -252,7 +254,13 @@ export function getConfirmedGeographyPayload(
         !country
         || !trigger.geographyConfirmed
         || (trigger.geographyType !== 'national'
-            && (!trigger.geographyLabel || !trigger.geographyCoordinates))
+            && (
+                !trigger.geographyLabel
+                || (
+                    !trigger.geographyCoordinates
+                    && trigger.geographySource !== 'pilot_document'
+                )
+            ))
     ) {
         return undefined;
     }
@@ -366,6 +374,7 @@ export function getDraftFingerprint(draft: TriggerBuilderDraft): string {
             geographyCoordinates: trigger.geographyCoordinates ?? null,
             geographySource: trigger.geographySource ?? null,
             geographyConfirmed: trigger.geographyConfirmed,
+            generationNotes: trigger.generationNotes ?? '',
             sources: trigger.sources.map((source) => ({
                 name: source.name,
                 link: source.link,

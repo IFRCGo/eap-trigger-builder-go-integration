@@ -36,6 +36,7 @@ import getReferenceData, {
     clearPrototypeAccessCode,
     generateTriggerStatement,
     getPrototypeAccessCode,
+    IncompleteGenerationError,
     PrototypeAccessError,
     setPrototypeAccessCode,
 } from './api';
@@ -105,6 +106,7 @@ export function Component() {
     const [sharing, setSharing] = useState(false);
     const [generating, setGenerating] = useState(false);
     const [generationFailed, setGenerationFailed] = useState(false);
+    const [generationIncomplete, setGenerationIncomplete] = useState(false);
     const [validationAttempted, setValidationAttempted] = useState(false);
     const [accessCodePromptOpen, setAccessCodePromptOpen] = useState(false);
     const [accessCodeInput, setAccessCodeInput] = useState('');
@@ -197,6 +199,8 @@ export function Component() {
         timeframeLabel: strings.timeframeLabel,
         timeframePlaceholder: strings.timeframePlaceholder,
         probabilityLabel: strings.probabilityLabel,
+        generationNotesLabel: strings.generationNotesLabel,
+        generationNotesPlaceholder: strings.generationNotesPlaceholder,
         geographyTitle: strings.geographyTitle,
         geographyDescription: strings.geographyDescription,
         geographyTypeLabel: strings.geographyTypeLabel,
@@ -208,7 +212,14 @@ export function Component() {
         geographyUnverifiedDescription: strings.geographyUnverifiedDescription,
         geographySelectButtonLabel: strings.geographySelectButtonLabel,
         geographyChangeButtonLabel: strings.geographyChangeButtonLabel,
+        geographyReferencePinButtonLabel: strings.geographyReferencePinButtonLabel,
+        geographyChangeReferencePinButtonLabel:
+            strings.geographyChangeReferencePinButtonLabel,
         geographyCloseButtonLabel: strings.geographyCloseButtonLabel,
+        geographyTextConfirmButtonLabel: strings.geographyTextConfirmButtonLabel,
+        geographyDocumentConfirmedTitle: strings.geographyDocumentConfirmedTitle,
+        geographyDocumentConfirmedDescription:
+            strings.geographyDocumentConfirmedDescription,
         geographySelectorLoadingTitle: strings.geographySelectorLoadingTitle,
         geographySelectorLoadingDescription: strings.geographySelectorLoadingDescription,
         forecastSourcesTitle: strings.forecastSourcesTitle,
@@ -234,6 +245,7 @@ export function Component() {
         generationControllerRef.current = undefined;
         setGenerating(false);
         setGenerationFailed(false);
+        setGenerationIncomplete(false);
         setValidationAttempted(false);
         if (referenceData.status !== 'ready' || !pilotId) {
             setDraft((currentDraft) => createBlankDraft(currentDraft.country));
@@ -371,6 +383,7 @@ export function Component() {
         generationControllerRef.current = undefined;
         setGenerating(false);
         setGenerationFailed(false);
+        setGenerationIncomplete(false);
         setValidationAttempted(false);
         const restoredDraft = savedDraft ?? createBlankDraft();
         setDraft(restoredDraft);
@@ -428,6 +441,7 @@ export function Component() {
         generationControllerRef.current = controller;
         setGenerating(true);
         setGenerationFailed(false);
+        setGenerationIncomplete(false);
 
         try {
             const pilotName = draftToGenerate.selectedPilotName?.toLocaleLowerCase() ?? '';
@@ -458,6 +472,7 @@ export function Component() {
                 return;
             }
             setGenerationFailed(true);
+            setGenerationIncomplete(error instanceof IncompleteGenerationError);
             if (error instanceof PrototypeAccessError) {
                 clearPrototypeAccessCode();
                 setAccessCodeInput('');
@@ -474,6 +489,7 @@ export function Component() {
     const startGeneration = (accessCode: string) => {
         setValidationAttempted(true);
         setGenerationFailed(false);
+        setGenerationIncomplete(false);
         if (getGenerationValidationErrors(draft)) {
             return;
         }
@@ -490,6 +506,7 @@ export function Component() {
         if (!accessCode) {
             setValidationAttempted(true);
             setGenerationFailed(false);
+            setGenerationIncomplete(false);
             if (!getGenerationValidationErrors(draft)) {
                 setAccessCodePromptOpen(true);
             }
@@ -774,7 +791,9 @@ export function Component() {
                                         <Message
                                             compact
                                             variant="error"
-                                            description={strings.generationRetryMessage}
+                                            description={generationIncomplete
+                                                ? strings.generationIncompleteMessage
+                                                : strings.generationRetryMessage}
                                         />
                                     )}
                                     {generating && (

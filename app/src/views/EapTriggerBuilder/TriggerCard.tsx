@@ -15,6 +15,7 @@ import {
     Message,
     NumberInput,
     SelectInput,
+    TextArea,
     TextInput,
 } from '@ifrc-go/ui';
 
@@ -57,6 +58,8 @@ interface Props {
         timeframeLabel: string;
         timeframePlaceholder: string;
         probabilityLabel: string;
+        generationNotesLabel: string;
+        generationNotesPlaceholder: string;
         geographyTitle: string;
         geographyDescription: string;
         geographyTypeLabel: string;
@@ -68,7 +71,12 @@ interface Props {
         geographyUnverifiedDescription: string;
         geographySelectButtonLabel: string;
         geographyChangeButtonLabel: string;
+        geographyReferencePinButtonLabel: string;
+        geographyChangeReferencePinButtonLabel: string;
         geographyCloseButtonLabel: string;
+        geographyTextConfirmButtonLabel: string;
+        geographyDocumentConfirmedTitle: string;
+        geographyDocumentConfirmedDescription: string;
         geographySelectorLoadingTitle: string;
         geographySelectorLoadingDescription: string;
         forecastSourcesTitle: string;
@@ -136,11 +144,26 @@ function TriggerCard(props: Props) {
         schema?.geographyTypes ?? [],
         trigger.geographyType,
     );
+    const isDocumentGeography = trigger.geographySource === 'pilot_document';
     let geographyButtonLabel = strings.geographySelectButtonLabel;
     if (geographyOpen) {
         geographyButtonLabel = strings.geographyCloseButtonLabel;
+    } else if (isDocumentGeography && trigger.geographyCoordinates) {
+        geographyButtonLabel = strings.geographyChangeReferencePinButtonLabel;
+    } else if (isDocumentGeography) {
+        geographyButtonLabel = strings.geographyReferencePinButtonLabel;
     } else if (trigger.geographyConfirmed) {
         geographyButtonLabel = strings.geographyChangeButtonLabel;
+    }
+    let geographyMessageTitle = strings.geographyUnverifiedTitle;
+    let geographyMessageDescription = strings.geographyUnverifiedDescription;
+    if (trigger.geographyConfirmed) {
+        geographyMessageTitle = isDocumentGeography
+            ? strings.geographyDocumentConfirmedTitle
+            : strings.geographyConfirmedTitle;
+        geographyMessageDescription = isDocumentGeography
+            ? strings.geographyDocumentConfirmedDescription
+            : strings.geographyConfirmedDescription;
     }
 
     return (
@@ -294,12 +317,14 @@ function TriggerCard(props: Props) {
                             onChange={(value) => onChange({ thresholdUnit: value ?? '' })}
                         />
                     )}
-                    <NumberInput
+                    <TextInput
                         name={undefined}
                         label={strings.leadTimeLabel}
-                        value={trigger.leadTimeValue}
-                        min={0}
-                        onChange={(value) => onChange({ leadTimeValue: value })}
+                        placeholder="e.g. 3-5 or 5"
+                        value={trigger.leadTimeValue !== undefined
+                            ? String(trigger.leadTimeValue)
+                            : ''}
+                        onChange={(value) => onChange({ leadTimeValue: value ?? '' })}
                     />
                     {timeframeOptions.length > 0 ? (
                         <SelectInput
@@ -327,6 +352,14 @@ function TriggerCard(props: Props) {
                         min={0}
                         max={100}
                         onChange={(value) => onChange({ probabilityValue: value })}
+                    />
+                    <TextArea
+                        name={undefined}
+                        label={strings.generationNotesLabel}
+                        placeholder={strings.generationNotesPlaceholder}
+                        rows={5}
+                        value={trigger.generationNotes ?? ''}
+                        onChange={(value) => onChange({ generationNotes: value ?? '' })}
                     />
                 </InputSection>
                 <InputSection
@@ -358,27 +391,58 @@ function TriggerCard(props: Props) {
                                     )}
                                 />
                             )}
-                            <TextInput
+                            <TextArea
                                 name={undefined}
                                 label={strings.geographyLabel}
                                 placeholder={strings.geographyPlaceholder}
+                                rows={3}
                                 value={trigger.geographyLabel}
-                                onChange={() => undefined}
-                                disabled
+                                onChange={(value) => {
+                                    const geographyLabel = value ?? '';
+                                    onChange({
+                                        geographyLabel,
+                                        geographyFeatureId: geographyLabel
+                                            ? trigger.geographyFeatureId
+                                            : undefined,
+                                        geographyCoordinates: geographyLabel
+                                            ? trigger.geographyCoordinates
+                                            : undefined,
+                                        geographySource: geographyLabel
+                                            ? 'pilot_document'
+                                            : undefined,
+                                        geographyConfirmed: false,
+                                    });
+                                }}
+                                disabled={trigger.geographyType === 'national'}
                             />
                         </div>
                         <Message
                             variant={errors?.geography ? 'error' : undefined}
-                            title={trigger.geographyConfirmed
-                                ? strings.geographyConfirmedTitle
-                                : strings.geographyUnverifiedTitle}
-                            description={trigger.geographyConfirmed
-                                ? strings.geographyConfirmedDescription
-                                : strings.geographyUnverifiedDescription}
+                            title={geographyMessageTitle}
+                            description={geographyMessageDescription}
                             compact
                         />
                         {trigger.geographyType !== 'national' && (
                             <div className={styles.geographyActions}>
+                                {(isDocumentGeography || !trigger.geographyConfirmed) && (
+                                    <Button
+                                        name={undefined}
+                                        styleVariant="filled"
+                                        disabled={
+                                            !trigger.geographyLabel.trim()
+                                            || (
+                                                isDocumentGeography
+                                                && trigger.geographyConfirmed
+                                            )
+                                        }
+                                        onClick={() => onChange({
+                                            geographySource: 'pilot_document',
+                                            geographyConfirmed: true,
+                                        })}
+                                    >
+                                        {strings.geographyTextConfirmButtonLabel}
+                                    </Button>
+                                )}
                                 <Button
                                     name={undefined}
                                     styleVariant={geographyOpen ? 'outline' : 'filled'}

@@ -470,6 +470,7 @@ function GeographySelector(props: Props) {
             !mapLoaded
             || importedLookupStartedRef.current
             || trigger.geographyConfirmed
+            || trigger.geographySource === 'pilot_document'
             || !trigger.geographyLabel.trim()
             || trigger.geographyType === 'national'
         ) {
@@ -482,6 +483,7 @@ function GeographySelector(props: Props) {
         runSearch,
         trigger.geographyConfirmed,
         trigger.geographyLabel,
+        trigger.geographySource,
         trigger.geographyType,
     ]);
 
@@ -537,25 +539,40 @@ function GeographySelector(props: Props) {
 
     const handleConfirm = useCallback(() => {
         if (pendingSelection) {
-            onChange({ ...pendingSelection, geographyConfirmed: true });
+            const preserveDocumentText = trigger.geographySource === 'pilot_document'
+                && Boolean(trigger.geographyLabel.trim());
+            onChange({
+                ...pendingSelection,
+                geographyLabel: preserveDocumentText
+                    ? trigger.geographyLabel
+                    : pendingSelection.geographyLabel,
+                geographySource: preserveDocumentText
+                    ? 'pilot_document'
+                    : pendingSelection.geographySource,
+                geographyConfirmed: true,
+            });
             setPendingSelection(undefined);
         }
-    }, [onChange, pendingSelection]);
+    }, [onChange, pendingSelection, trigger.geographyLabel, trigger.geographySource]);
 
     const handleClear = useCallback(() => {
+        const preserveDocumentText = trigger.geographySource === 'pilot_document'
+            && Boolean(trigger.geographyLabel.trim());
         setPendingSelection(undefined);
         setSuggestions([]);
         setSearchText('');
         markerRef.current?.remove();
         markerRef.current = undefined;
         onChange({
-            geographyLabel: '',
+            geographyLabel: preserveDocumentText ? trigger.geographyLabel : '',
             geographyFeatureId: undefined,
             geographyCoordinates: undefined,
-            geographySource: undefined,
-            geographyConfirmed: false,
+            geographySource: preserveDocumentText ? 'pilot_document' : undefined,
+            geographyConfirmed: preserveDocumentText
+                ? trigger.geographyConfirmed
+                : false,
         });
-    }, [onChange]);
+    }, [onChange, trigger.geographyConfirmed, trigger.geographyLabel, trigger.geographySource]);
 
     if (!countrySelected) {
         return (
@@ -577,7 +594,7 @@ function GeographySelector(props: Props) {
         );
     }
 
-    const displayedSelection = pendingSelection ?? (trigger.geographyLabel ? {
+    const displayedSelection = pendingSelection ?? (trigger.geographyCoordinates ? {
         geographyFeatureId: trigger.geographyFeatureId,
         geographyLabel: trigger.geographyLabel,
         geographyCoordinates: trigger.geographyCoordinates,
@@ -705,7 +722,9 @@ function GeographySelector(props: Props) {
                                 styleVariant="filled"
                                 onClick={handleConfirm}
                             >
-                                {strings.geographyConfirmButtonLabel}
+                                {trigger.geographySource === 'pilot_document'
+                                    ? strings.geographyConfirmReferencePinButtonLabel
+                                    : strings.geographyConfirmButtonLabel}
                             </Button>
                         )}
                         <Button
@@ -713,7 +732,9 @@ function GeographySelector(props: Props) {
                             styleVariant="outline"
                             onClick={handleClear}
                         >
-                            {strings.geographyClearButtonLabel}
+                            {trigger.geographySource === 'pilot_document'
+                                ? strings.geographyClearReferencePinButtonLabel
+                                : strings.geographyClearButtonLabel}
                         </Button>
                     </div>
                 </div>

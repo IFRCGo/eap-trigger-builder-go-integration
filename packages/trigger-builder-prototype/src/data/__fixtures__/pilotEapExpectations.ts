@@ -40,17 +40,17 @@ export interface EapExpectation {
 export const pilotEapExpectations: Record<string, EapExpectation> = {
     '16389': {
         totalStatements: 4,
-        phaseDistribution: { pre_activation: 1, activation: 1, stop: 2 },
+        phaseDistribution: { pre_activation: 0, activation: 2, stop: 2 },
         proseOnlyIndices: [3],
         spotChecks: [
             {
                 index: 0,
-                phase: 'pre_activation',
+                phase: 'activation',
                 canonicalVariable: 'Wind',
                 operator: '>=',
                 thresholdValue: '34',
                 geographyType: 'regional',
-                sourceAuthority: 'CENAOS or NOAA',
+                sourceAuthority: 'CENAOS (Center for Atmospheric, Oceanographic and Seismic Studies) or NOAA (National Oceanic and Atmospheric Administration)',
                 crossConnector: 'ENABLES',
             },
             {
@@ -60,7 +60,7 @@ export const pilotEapExpectations: Record<string, EapExpectation> = {
                 operator: '==',
                 thresholdValue: '10',
                 geographyType: 'watershed_basin',
-                sourceAuthority: 'GEOGLOWS/GloFAS',
+                sourceAuthority: 'GEOGLOWS (Group on Earth Observations Global Water Sustainability) / GloFAS (Global Flood Awareness System)',
             },
             {
                 index: 2,
@@ -86,7 +86,7 @@ export const pilotEapExpectations: Record<string, EapExpectation> = {
 
     '16399': {
         totalStatements: 9,
-        phaseDistribution: { pre_activation: 6, activation: 2, stop: 1 },
+        phaseDistribution: { pre_activation: 3, activation: 5, stop: 1 },
         proseOnlyIndices: [],
         spotChecks: [
             {
@@ -102,12 +102,12 @@ export const pilotEapExpectations: Record<string, EapExpectation> = {
             },
             {
                 index: 3,
-                phase: 'pre_activation',
+                phase: 'activation',
                 canonicalVariable: 'Precipitation',
                 operator: '>=',
                 thresholdValue: '100',
                 geographyType: 'watershed_basin',
-                sourceAuthority: 'DCCMS',
+                sourceAuthority: 'DCCMS (Department of Climate Change and Meteorological Services)',
                 withinConnector: 'OR',
                 crossConnector: 'THEN',
             },
@@ -166,7 +166,7 @@ export const pilotEapExpectations: Record<string, EapExpectation> = {
             {
                 index: 0,
                 phase: 'activation',
-                canonicalVariable: 'Hydrological Flow',
+                canonicalVariable: 'Precipitation',
                 operator: '>',
                 thresholdValue: '150',
                 geographyType: 'watershed_basin',
@@ -184,10 +184,10 @@ export const pilotEapExpectations: Record<string, EapExpectation> = {
                 index: 0,
                 phase: 'activation',
                 canonicalVariable: 'Precipitation',
-                operator: '<=',
-                thresholdValue: 'lower tercile',
-                geographyType: 'watershed_basin',
-                sourceAuthority: 'Directorate of Meteorology and Hydrology (DMH)',
+                operator: '<',
+                thresholdValue: '33',
+                geographyType: 'regional',
+                sourceAuthority: 'Directorate of Meteorology and Hydrology (DMH) - Climate Outlook Bulletin',
             },
         ],
     },
@@ -204,7 +204,7 @@ export const pilotEapExpectations: Record<string, EapExpectation> = {
                 operator: '>',
                 thresholdValue: '95',
                 geographyType: 'administrative_unit',
-                sourceAuthority: 'ECMWF',
+                sourceAuthority: 'National Hydrometeorological Agency (IGEO), using European Centre for Medium-Range Weather Forecasts (ECMWF) forecasts',
                 withinConnector: 'AND',
             },
             {
@@ -214,7 +214,7 @@ export const pilotEapExpectations: Record<string, EapExpectation> = {
                 operator: '>',
                 thresholdValue: '95',
                 geographyType: 'administrative_unit',
-                sourceAuthority: 'ECMWF',
+                sourceAuthority: 'National Hydrometeorological Agency (IGEO), using European Centre for Medium-Range Weather Forecasts (ECMWF) forecasts',
             },
         ],
     },

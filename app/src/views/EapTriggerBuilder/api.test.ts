@@ -7,10 +7,11 @@ import {
     vi,
 } from 'vitest';
 
-import {
+import getReferenceData, {
     clearPrototypeAccessCode,
     generateTriggerStatement,
     getPrototypeAccessCode,
+    type IncompleteGenerationError,
     PrototypeAccessError,
     setPrototypeAccessCode,
 } from './api';
@@ -88,6 +89,45 @@ describe('EAP Trigger Builder API', () => {
         vi.unstubAllGlobals();
     });
 
+    test('loads only opt-in generation notes from pilot examples', async () => {
+        fetchMock
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    lookups: {
+                        primaryVariables: [{ key: 'Precipitation', label: 'Precipitation' }],
+                        hazardTypes: [],
+                        subcategoriesByVariable: {},
+                        unitsByVariable: {},
+                        operatorsByVariable: {},
+                        timeframeUnits: [],
+                        geographyTypes: [],
+                    },
+                }),
+            })
+            .mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    examples: [{
+                        document_id: 16399,
+                        document_name: 'Malawi - Pluvial Floods sEAP (MDRMW023)',
+                        statements: [{
+                            phase: 'activation',
+                            notes: 'Legacy extraction note that must remain ignored.',
+                            generationNotes: 'Lake Chilwa Basin: 150 mm',
+                        }],
+                    }],
+                }),
+            });
+
+        const result = await getReferenceData(new AbortController().signal);
+
+        expect(result.examples[0]?.statements[0]).toMatchObject({
+            generationNotes: 'Lake Chilwa Basin: 150 mm',
+        });
+        expect(result.examples[0]?.statements[0]).not.toHaveProperty('notes');
+    });
+
     test('maps current structured fields into initial and repeated Generate requests', async () => {
         fetchMock.mockResolvedValue({
             ok: true,
@@ -129,6 +169,7 @@ describe('EAP Trigger Builder API', () => {
                     phase: 'activation',
                     thresholdValue: '40',
                     sourceAuthority: 'National weather service; Regional forecast centre',
+                    notes: '',
                     withinConnector: 'THEN',
                 },
                 {
@@ -157,6 +198,65 @@ describe('EAP Trigger Builder API', () => {
             statements: Array<{ thresholdValue: string }>;
         };
         expect(secondBody.statements[0]?.thresholdValue).toBe('42');
+    });
+
+    test('sends opt-in generation facts and rejects an AI response that omits one', async () => {
+        const requiredFacts = [
+            'Rainfall accumulation window: 72 hours',
+            'Shire River Basin (Mwanza Gauging Station): 100 mm',
+            'Lake Chilwa Basin: 150 mm',
+        ].join('\n');
+        const draft = createCompleteDraft();
+        const draftWithFacts = {
+            ...draft,
+            triggers: draft.triggers.map((trigger, index) => (
+                index === 0 ? { ...trigger, generationNotes: requiredFacts } : trigger
+            )),
+        };
+        fetchMock.mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            json: async () => ({
+                reviewOutput: {
+                    activation: 'The rainfall accumulation window is 72 hours, with 100 mm at Shire River Basin (Mwanza Gauging Station) and 150 mm at Lake Chilwa Basin.',
+                    combined: '',
+                },
+            }),
+        });
+
+        await expect(generateTriggerStatement(
+            draftWithFacts,
+            ['Flood'],
+            'session-code',
+            new AbortController().signal,
+        )).resolves.toContain('Lake Chilwa Basin');
+
+        const firstInit = fetchMock.mock.calls[0]?.[1] as RequestInit;
+        const firstBody = JSON.parse(String(firstInit.body)) as {
+            statements: Array<{ notes: string }>;
+        };
+        expect(firstBody.statements[0]?.notes).toBe(requiredFacts);
+
+        fetchMock.mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            json: async () => ({
+                reviewOutput: {
+                    activation: 'The rainfall accumulation window is 72 hours, with 100 mm at Shire River Basin (Mwanza Gauging Station).',
+                    combined: '',
+                },
+            }),
+        });
+
+        await expect(generateTriggerStatement(
+            draftWithFacts,
+            ['Flood'],
+            'session-code',
+            new AbortController().signal,
+        )).rejects.toMatchObject({
+            name: 'IncompleteGenerationError',
+            missingFacts: ['Lake Chilwa Basin: 150 mm'],
+        } satisfies Partial<IncompleteGenerationError>);
     });
 
     test('keeps the access code in session storage only', () => {

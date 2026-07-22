@@ -21,13 +21,14 @@ export interface PilotStatement {
     thresholdValue: string;
     thresholdUnit: string;
     probabilityValue: number | undefined;
-    leadTimeValue: number | undefined;
+    leadTimeValue: string | number | undefined;
     timeframeUnit: string;
     geographyType: string;
     geographyLabel: string;
     withinConnector: string;
     crossConnector: string;
     sourceAuthority: string;
+    generationNotes?: string;
 }
 
 export interface PilotExample {
@@ -59,7 +60,8 @@ export type GeographySource =
     | 'go_admin2'
     | 'mapbox_search'
     | 'mapbox_pin'
-    | 'pilot_geocoded';
+    | 'pilot_geocoded'
+    | 'pilot_document';
 
 export interface GeographySelection {
     geographyFeatureId?: string;
@@ -86,7 +88,7 @@ export interface TriggerDraft {
     thresholdValue: string;
     thresholdUnit: string;
     probabilityValue: number | undefined;
-    leadTimeValue: number | undefined;
+    leadTimeValue: string | number | undefined;
     timeframeUnit: string;
     geographyType: string;
     geographyLabel: string;
@@ -94,6 +96,7 @@ export interface TriggerDraft {
     geographyCoordinates: GeographyCoordinates | undefined;
     geographySource: GeographySource | undefined;
     geographyConfirmed: boolean;
+    generationNotes?: string;
     sources: ForecastSource[];
     connectorToNext: TriggerConnector | undefined;
 }

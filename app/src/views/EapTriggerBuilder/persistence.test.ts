@@ -25,15 +25,24 @@ vi.mock('#utils/common', () => ({
 }));
 
 function createDraft(): TriggerBuilderDraft {
+    const draft = createBlankDraft({
+        id: 123,
+        iso: 'MW',
+        iso3: 'MWI',
+        name: 'Malawi',
+        centroid: { longitude: 34.3, latitude: -13.2 },
+        boundingBox: [32.6, -17.1, 35.9, -9.3],
+    });
     return {
-        ...createBlankDraft({
-            id: 123,
-            iso: 'MW',
-            iso3: 'MWI',
-            name: 'Malawi',
-            centroid: { longitude: 34.3, latitude: -13.2 },
-            boundingBox: [32.6, -17.1, 35.9, -9.3],
-        }),
+        ...draft,
+        triggers: draft.triggers.map((trigger) => ({
+            ...trigger,
+            geographyType: 'watershed_basin',
+            geographyLabel: 'Five document-defined catchments',
+            geographySource: 'pilot_document',
+            geographyConfirmed: true,
+            generationNotes: 'Lake Chilwa Basin: 150 mm',
+        })),
         aiStatement: 'Editable AI statement',
         aiGeneratedAt: '2026-07-21T12:00:00.000Z',
     };
@@ -70,6 +79,7 @@ describe('EAP Trigger Builder persistence', () => {
         const serialized = localStorage.getItem(DRAFT_STORAGE_KEY);
         expect(serialized).toContain('Editable AI statement');
         expect(serialized).toContain('2026-07-21T12:00:00.000Z');
+        expect(serialized).toContain('Lake Chilwa Basin: 150 mm');
         expect(serialized).not.toContain('must-not-be-saved');
 
         const loadResult = loadTriggerBuilderDraft();
@@ -78,6 +88,11 @@ describe('EAP Trigger Builder persistence', () => {
             draft: {
                 aiStatement: 'Editable AI statement',
                 aiGeneratedAt: '2026-07-21T12:00:00.000Z',
+                triggers: [{
+                    geographySource: 'pilot_document',
+                    geographyConfirmed: true,
+                    generationNotes: 'Lake Chilwa Basin: 150 mm',
+                }],
             },
         });
     });
