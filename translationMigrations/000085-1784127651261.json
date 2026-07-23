@@ -1,0 +1,107 @@
+{
+    "parent": "000084-1781194678200.json",
+    "actions": [
+        {
+            "action": "add",
+            "key": "eapTriggerBuilder",
+            "namespace": "common",
+            "value": "EAP Trigger Builder"
+        },
+        {
+            "action": "add",
+            "key": "activationProcessStepLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "EAP Activation Process"
+        },
+        {
+            "action": "add",
+            "key": "cancelButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Cancel"
+        },
+        {
+            "action": "add",
+            "key": "financeLogisticsStepLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Finance & Logistics"
+        },
+        {
+            "action": "add",
+            "key": "mealStepLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "MEAL"
+        },
+        {
+            "action": "add",
+            "key": "nationalSocietyCapacityStepLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "National Society Capacity"
+        },
+        {
+            "action": "add",
+            "key": "overviewStepLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Overview"
+        },
+        {
+            "action": "add",
+            "key": "pageDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Use this Full EAP form to define the Trigger Model for your Early Action Protocol."
+        },
+        {
+            "action": "add",
+            "key": "pageHeading",
+            "namespace": "eapTriggerBuilder",
+            "value": "EAP Trigger Builder - Full EAP"
+        },
+        {
+            "action": "add",
+            "key": "pageTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "EAP Trigger Builder"
+        },
+        {
+            "action": "add",
+            "key": "riskAnalysisStepLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Risk Analysis"
+        },
+        {
+            "action": "add",
+            "key": "saveAndCloseButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Save and close"
+        },
+        {
+            "action": "add",
+            "key": "sectionQualityCriteriaLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Section quality criteria"
+        },
+        {
+            "action": "add",
+            "key": "selectionActionsStepLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Selection of Actions"
+        },
+        {
+            "action": "add",
+            "key": "shareButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Share"
+        },
+        {
+            "action": "add",
+            "key": "triggerModelHeading",
+            "namespace": "eapTriggerBuilder",
+            "value": "Trigger Model"
+        },
+        {
+            "action": "add",
+            "key": "triggerModelStepLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Trigger Model"
+        }
+    ]
+}

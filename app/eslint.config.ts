@@ -106,6 +106,8 @@ const appConfigs = compat.config({
         'react-hooks/set-state-in-effect': 'error',
         'react-hooks/immutability': 'error',
 
+        'linebreak-style': 'off',
+
         'react/require-default-props': ['warn', { ignoreFunctionalComponents: true }],
         'simple-import-sort/imports': 'warn',
         'simple-import-sort/exports': 'warn',

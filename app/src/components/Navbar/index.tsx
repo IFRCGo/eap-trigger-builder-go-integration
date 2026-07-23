@@ -361,6 +361,14 @@ function Navbar(props: Props) {
                                 >
                                     {strings.earlyActionProtocols}
                                 </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    type="link"
+                                    to="eapTriggerBuilder"
+                                    styleVariant="action"
+                                    withoutFullWidth
+                                >
+                                    {strings.eapTriggerBuilder}
+                                </DropdownMenuItem>
                             </NavDropdownTabDetails>
                             <NavDropdownTabDetails
                                 name="surge"

@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1-labs
 
 # -------------------------- Dev ---------------------------------------
-FROM node:20-bookworm AS dev
+FROM node:22.23.1-bookworm AS dev
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -27,6 +27,7 @@ ENV APP_ENVIRONMENT=APP_ENVIRONMENT_PLACEHOLDER
 ENV APP_MAPBOX_ACCESS_TOKEN=APP_MAPBOX_ACCESS_TOKEN_PLACEHOLDER
 ENV APP_TINY_API_KEY=APP_TINY_API_KEY_PLACEHOLDER
 ENV APP_API_ENDPOINT=https://APP-API-ENDPOINT-PLACEHOLDER.COM/
+ENV APP_TRIGGER_BUILDER_API_ENDPOINT=https://APP-TRIGGER-BUILDER-API-ENDPOINT-PLACEHOLDER.COM/
 ENV APP_TRANSLATION_API_ENDPOINT=https://APP-TRANSLATION-API-ENDPOINT-PLACEHOLDER.COM/
 ENV APP_RISK_API_ENDPOINT=https://APP-RISK-API-ENDPOINT-PLACEHOLDER.COM/
 ENV APP_SDT_URL=https://APP-SDT-URL-PLACEHOLDER.COM/
@@ -39,6 +40,8 @@ ARG APP_SENTRY_REPLAYS_SESSION_SAMPLE_RATE=
 ENV APP_SENTRY_REPLAYS_SESSION_SAMPLE_RATE=${APP_SENTRY_REPLAYS_SESSION_SAMPLE_RATE}
 ARG APP_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE=
 ENV APP_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE=${APP_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE}
+ARG APP_COMMIT_HASH=
+ENV APP_COMMIT_HASH=${APP_COMMIT_HASH}
 
 RUN pnpm build
 
@@ -49,6 +52,8 @@ LABEL maintainer="IFRC"
 LABEL org.opencontainers.image.source="https://github.com/IFRCGo/go-web-app"
 
 COPY ./nginx-serve/apply-config.sh /docker-entrypoint.d/
+RUN sed -i 's/\r$//' /docker-entrypoint.d/apply-config.sh \
+    && chmod +x /docker-entrypoint.d/apply-config.sh
 COPY ./nginx-serve/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=nginx-build /code/build /code/build
 

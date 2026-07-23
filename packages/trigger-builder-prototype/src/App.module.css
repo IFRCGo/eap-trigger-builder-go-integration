@@ -1,0 +1,1321 @@
+﻿.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--go-ui-color-background);
+}
+
+.pageHeader {
+    background: var(--go-ui-color-background);
+}
+
+.pageContent {
+    padding: var(--go-ui-spacing-4xl) var(--go-ui-spacing-lg);
+}
+
+.contentStack {
+    display: grid;
+    gap: var(--go-ui-spacing-lg);
+}
+
+.formStack {
+    display: grid;
+    gap: var(--go-ui-spacing-lg);
+    margin: 0 auto;
+    width: 100%;
+    max-width: var(--go-ui-page-width-max);
+}
+
+.sectionCard {
+    animation: riseIn 0.45s ease both;
+}
+
+.sectionCard :global(h2),
+.sectionCard :global(h3),
+.sectionCard :global(h4) {
+    color: var(--go-ui-color-text);
+    font-weight: var(--go-ui-font-weight-bold);
+}
+
+.headerActionCluster {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.workflowHeaderInfo {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.headerStatusRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.statusPill {
+    display: inline-flex;
+    align-items: center;
+    border: var(--go-ui-width-separator-thin) solid rgb(0 0 0 / 0.08);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.9);
+    padding: var(--go-ui-spacing-2xs) var(--go-ui-spacing-xs);
+    color: var(--go-ui-color-text);
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-semibold);
+    letter-spacing: 0.01em;
+}
+
+.statusPill[data-tone='ready'] {
+    border-color: rgb(127 184 69 / 0.35);
+    background: rgb(127 184 69 / 0.12);
+    color: var(--go-ui-color-text);
+}
+
+.statusPill[data-tone='attention'] {
+    border-color: rgb(237 27 46 / 0.28);
+    background: rgb(237 27 46 / 0.08);
+    color: var(--go-ui-color-primary-red);
+}
+
+.statusPill[data-tone='neutral'] {
+    border-color: rgb(52 75 103 / 0.18);
+    background: rgb(52 75 103 / 0.06);
+    color: var(--go-ui-color-primary-blue);
+}
+
+.stageMessage {
+    width: 100%;
+}
+
+.messageLink {
+    color: var(--go-ui-color-primary-red);
+    font-weight: var(--go-ui-font-weight-semibold);
+    text-decoration: none;
+}
+
+.messageLink:hover {
+    text-decoration: underline;
+}
+
+
+
+.exampleContextCard {
+    display: grid;
+    gap: 0.75rem;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background-color: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-md);
+}
+
+.cardEyebrow {
+    margin: 0;
+    color: var(--go-ui-color-text-light);
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.contextText {
+    margin: 0;
+    color: var(--go-ui-color-text-light);
+    line-height: var(--go-ui-line-height-md);
+}
+
+.chipRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+
+
+.titlePreviewCard {
+    display: grid;
+    gap: 0.85rem;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background-color: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-md);
+}
+
+.titlePreview {
+    margin: 0;
+    color: var(--go-ui-color-text);
+    font-size: var(--go-ui-font-size-xl);
+    line-height: var(--go-ui-line-height-xs);
+}
+
+.titlePreviewNote {
+    margin: 0;
+    color: var(--go-ui-color-text-light);
+    line-height: var(--go-ui-line-height-md);
+}
+
+.previewMetaList {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.hazardChipList {
+    margin: 0;
+}
+
+.previewMetaRow {
+    justify-content: space-between;
+    border-top: var(--go-ui-width-separator-thin) solid rgb(0 0 0 / 0.06);
+    padding-top: 0.55rem;
+}
+
+.previewMetaLabel {
+    color: var(--go-ui-color-text-light);
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.previewMetaValue {
+    color: var(--go-ui-color-text);
+    font-weight: var(--go-ui-font-weight-semibold);
+    text-align: right;
+}
+
+
+
+.phaseGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    align-items: end;
+}
+
+.phaseStatusCard {
+    display: grid;
+    gap: 0.35rem;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background-color: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-sm) var(--go-ui-spacing-md);
+}
+
+.phaseStatusLabel {
+    margin: 0;
+    color: var(--go-ui-color-text-light);
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.phaseStatusValue {
+    margin: 0;
+    color: var(--go-ui-color-text);
+    font-size: var(--go-ui-font-size-lg);
+    font-weight: var(--go-ui-font-weight-bold);
+}
+
+.phaseStatusHint {
+    margin: 0;
+    color: var(--go-ui-color-text-light);
+    line-height: var(--go-ui-line-height-md);
+}
+
+.helperMessage {
+    border-radius: 0.9rem;
+}
+
+.inlineNote {
+    margin: 0;
+    color: var(--go-ui-color-text-light);
+    line-height: var(--go-ui-line-height-md);
+}
+
+.connectorGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.9rem;
+}
+
+.connectorCard {
+    display: grid;
+    gap: 0.75rem;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background-color: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-md);
+}
+
+.connectorTitle {
+    margin: 0;
+    color: var(--go-ui-color-text);
+    font-weight: var(--go-ui-font-weight-bold);
+}
+
+.connectorDescription {
+    margin: 0;
+    color: var(--go-ui-color-text-light);
+    line-height: var(--go-ui-line-height-md);
+}
+
+.metricGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.summaryCard {
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background-color: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-sm);
+}
+
+.summaryLabel {
+    margin: 0 0 0.35rem;
+    color: var(--go-ui-color-text-light);
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.summaryValue {
+    margin: 0;
+    color: var(--go-ui-color-text);
+    font-size: var(--go-ui-font-size-xl);
+    font-weight: var(--go-ui-font-weight-bold);
+}
+
+.summaryHint {
+    margin: 0.45rem 0 0;
+    color: var(--go-ui-color-text-light);
+    font-size: var(--go-ui-font-size-md);
+    line-height: var(--go-ui-line-height-sm);
+}
+
+.summaryList {
+    display: grid;
+    gap: 0.85rem;
+    margin-top: var(--go-ui-spacing-md);
+}
+
+.summaryItem {
+    border-top: var(--go-ui-width-separator-thin) solid rgb(0 0 0 / 0.07);
+    padding-top: 0.85rem;
+}
+
+.summaryItemLabel {
+    margin: 0 0 0.25rem;
+    color: var(--go-ui-color-text-light);
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.summaryItemValue {
+    margin: 0;
+    color: var(--go-ui-color-text);
+    line-height: var(--go-ui-line-height-md);
+}
+
+.previewPanel {
+    display: grid;
+    gap: 0.8rem;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background-color: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-md);
+}
+
+.previewHeaderRow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.previewLabel {
+    margin: 0;
+    color: var(--go-ui-color-text-light);
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.previewText {
+    margin: 0;
+    color: var(--go-ui-color-text);
+    line-height: var(--go-ui-line-height-md);
+}
+
+.exportModal {
+    background:
+        linear-gradient(180deg, rgb(255 255 255 / 0.98), rgb(249 245 240 / 0.98));
+}
+
+.exportOptionGrid {
+    margin: 0;
+}
+
+.exportPreviewStack {
+    margin: 0;
+}
+
+.exportPreviewCard {
+    display: grid;
+    gap: 0.75rem;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: 1rem;
+    background: rgb(255 255 255 / 0.95);
+    padding: var(--go-ui-spacing-md);
+}
+
+.exportPreviewLabel {
+    color: var(--go-ui-color-text-light);
+    font-weight: var(--go-ui-font-weight-bold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.exportCodeBlock {
+    overflow: auto;
+    margin: 0;
+    border-radius: 0.9rem;
+    background: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-md);
+    color: var(--go-ui-color-text-black);
+    font-family: Consolas, Monaco, monospace;
+    font-size: var(--go-ui-font-size-md);
+    line-height: var(--go-ui-line-height-md);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.exportActionRow {
+    justify-content: flex-end;
+}
+
+.criteriaList {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--go-ui-color-text-light);
+    line-height: var(--go-ui-line-height-md);
+}
+
+.generatingPlaceholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--go-ui-spacing-lg);
+    background: var(--go-ui-color-background-overlay);
+    border-radius: var(--go-ui-border-radius-lg);
+    border: var(--go-ui-width-separator-thin) dashed var(--go-ui-color-separator);
+}
+
+.validationMessage {
+    border: var(--go-ui-width-separator-thin) solid rgb(237 27 46 / 0.28);
+    background: rgb(237 27 46 / 0.08);
+    border-radius: 1rem;
+    box-shadow: 0 0.75rem 1.5rem rgb(237 27 46 / 0.04);
+}
+
+.contextFilename {
+    margin: 0;
+    font-size: var(--go-ui-font-size-md);
+    color: var(--go-ui-color-text-light);
+}
+
+.contextFilename code {
+    background: rgb(0 0 0 / 0.05);
+    padding: var(--go-ui-spacing-4xs) var(--go-ui-spacing-2xs);
+    border-radius: var(--go-ui-border-radius-md);
+    font-family: Consolas, monospace;
+}
+
+.contextDetailsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.contextDetailItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.detailLabel {
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    text-transform: uppercase;
+    color: var(--go-ui-color-text-light);
+    letter-spacing: 0.04em;
+}
+
+.detailValue {
+    font-size: var(--go-ui-font-size-md);
+    font-weight: var(--go-ui-font-weight-semibold);
+    color: var(--go-ui-color-text);
+}
+
+.progressBarWrapper {
+    margin-top: 0.85rem;
+    border-top: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    padding-top: 0.85rem;
+}
+
+.flagsSection {
+    margin-top: 0.85rem;
+    border-top: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    padding-top: 0.85rem;
+}
+
+.flagsLabel {
+    margin: 0 0 0.45rem;
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    text-transform: uppercase;
+    color: var(--go-ui-color-text-light);
+    letter-spacing: 0.04em;
+}
+
+.schemaMetadataSummary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    border-top: var(--go-ui-width-separator-thin) dashed var(--go-ui-color-separator);
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.schemaMetaItem {
+    font-size: var(--go-ui-font-size-sm);
+    color: var(--go-ui-color-text-light);
+}
+
+.schemaMetaItem strong {
+    color: var(--go-ui-color-text);
+}
+
+@keyframes riseIn {
+    from {
+        opacity: 0;
+        transform: translateY(0.4rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (width <= 64rem) {
+    .metricGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (width <= 56rem) {
+    .pageContent {
+        padding: var(--go-ui-spacing-2xl) var(--go-ui-spacing-lg);
+    }
+
+    .headerActionCluster {
+        justify-content: flex-start;
+    }
+
+    .formStack {
+        gap: var(--go-ui-spacing-md);
+    }
+
+    .comparisonGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Stage 7: Multi-Statement Form Classes */
+.phaseGroup {
+    display: grid;
+    gap: 1.25rem;
+    padding: var(--go-ui-spacing-md);
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background-color: var(--go-ui-color-background-light);
+    margin-bottom: 2rem;
+}
+
+.phaseGroupHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.phaseGroupTitle {
+    margin: 0;
+    color: var(--go-ui-color-text);
+}
+
+.statementCard {
+    display: grid;
+    gap: 1rem;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background-color: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-md);
+    margin-bottom: 1rem;
+    animation: riseIn 0.3s ease-out;
+}
+
+.statementCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: var(--go-ui-width-separator-thin) dashed var(--go-ui-color-separator);
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.statementCardTitle {
+    margin: 0;
+    color: var(--go-ui-color-text);
+}
+
+.statementCardActions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.statementCardBody {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.suggestiveInputWrapper {
+    display: grid;
+    gap: 0.5rem;
+    align-items: start;
+}
+
+.suggestiveInputWrapper :global(.go-text-input) {
+    margin-top: 0.5rem;
+}
+
+.reorderBtn {
+    padding: var(--go-ui-spacing-3xs) var(--go-ui-spacing-xs);
+    min-width: 2rem;
+    font-size: var(--go-ui-font-size-md);
+}
+
+.addStatementBtn {
+    margin-top: 0.5rem;
+    justify-self: start;
+}
+
+.noStatementsMessage {
+    padding: var(--go-ui-spacing-lg);
+    text-align: center;
+    color: var(--go-ui-color-text-light);
+    font-style: italic;
+    background: var(--go-ui-color-background);
+    border: var(--go-ui-width-separator-thin) dashed var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-md);
+}
+
+.freeTextToggleBtn {
+    font-size: var(--go-ui-font-size-sm);
+    color: var(--go-ui-color-primary-red);
+    padding: var(--go-ui-spacing-4xs) var(--go-ui-spacing-2xs);
+}
+
+.addBlockRow {
+    display: flex;
+    align-items: center;
+    padding: var(--go-ui-spacing-3xs) 0;
+}
+
+.tooltipList {
+    margin: 0.5rem 0 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.4rem;
+    font-size: var(--go-ui-font-size-sm);
+    color: var(--go-ui-color-text);
+    line-height: var(--go-ui-line-height-md);
+}
+
+/* Stage 8: Connectors and Geography Maps Styles */
+
+/* Inline Connector Styles */
+.inlineConnectorRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+    margin-block: -0.5rem 0.5rem;
+    border-radius: var(--go-ui-border-radius-md);
+    background: rgba(200, 31, 47, 0.03);
+    border: var(--go-ui-width-separator-thin) dashed rgba(200, 31, 47, 0.15);
+    animation: riseIn 0.3s ease-out;
+}
+
+.inlineConnectorLabel {
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    text-transform: uppercase;
+    color: var(--go-ui-color-primary-red);
+    letter-spacing: 0.05em;
+}
+
+.inlineConnectorSelectWrapper {
+    width: 12rem;
+}
+
+.inlineConnectorCustomInput {
+    width: 15rem;
+}
+
+/* Inter-Phase Flow Connector Styles */
+.interPhaseFlowConnector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-block: 1rem;
+    padding: var(--go-ui-spacing-sm);
+    border-radius: var(--go-ui-border-radius-lg);
+    background: rgba(52, 75, 103, 0.04);
+    border: var(--go-ui-width-separator-thin) solid rgba(52, 75, 103, 0.1);
+    align-self: center;
+    width: 100%;
+    max-width: 28rem;
+    margin-inline: auto;
+}
+
+.interPhaseFlowLabel {
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    text-transform: uppercase;
+    color: var(--go-ui-color-primary-blue);
+    letter-spacing: 0.04em;
+}
+
+.interPhaseFlowControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Mapbox GL Map Container Styles */
+.mapWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    overflow: hidden;
+    background: var(--go-ui-color-background);
+}
+
+.mapCanvas {
+    width: 100%;
+    height: 320px;
+    background: var(--go-ui-color-background);
+}
+
+.mapCanvasLoading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(238, 242, 245, 0.85);
+    color: var(--go-ui-color-text-light);
+    font-weight: var(--go-ui-font-weight-semibold);
+}
+
+.mapHintText {
+    margin: 0;
+    padding: var(--go-ui-spacing-xs) var(--go-ui-spacing-md);
+    font-size: var(--go-ui-font-size-md);
+    color: var(--go-ui-color-text-light);
+    background: var(--go-ui-color-background-overlay);
+    border-top: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.mapContainerNational {
+    padding: var(--go-ui-spacing-md);
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background: rgba(52, 75, 103, 0.03);
+    border-left: var(--go-ui-width-separator-thick) solid var(--go-ui-color-primary-blue);
+}
+
+.mapNationalText {
+    margin: 0;
+    font-size: var(--go-ui-font-size-md);
+    color: var(--go-ui-color-text);
+    line-height: var(--go-ui-line-height-md);
+    font-weight: var(--go-ui-font-weight-medium);
+}
+
+/* Mapbox Markers Custom Styling */
+.mapMarkerGauge {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--go-ui-color-primary-red);
+    border: var(--go-ui-width-separator-md) solid var(--go-ui-color-text-on-dark);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.mapMarkerGauge:hover {
+    transform: scale(1.35);
+    background: var(--go-ui-color-primary-red);
+}
+
+.mapMarkerBasin {
+    font-size: var(--go-ui-font-size-xl);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.mapMarkerBasin:hover {
+    transform: scale(1.35);
+}
+
+.mapMarkerRegion {
+    font-size: var(--go-ui-font-size-xl);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.mapMarkerRegion:hover {
+    transform: scale(1.35);
+}
+
+.mapMarkerDistrict {
+    font-size: var(--go-ui-font-size-xl);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.mapMarkerDistrict:hover {
+    transform: scale(1.35);
+}
+
+/* SVG Fallback Map Styles */
+.svgMapWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-lg);
+    background: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-md);
+    overflow: hidden;
+}
+
+.svgMapFlex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.svgMapContainer {
+    flex: 1;
+    min-width: 12rem;
+    max-width: 20rem;
+    display: flex;
+    justify-content: center;
+    background: var(--go-ui-color-background);
+    border-radius: var(--go-ui-border-radius-md);
+    padding: var(--go-ui-spacing-md);
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+}
+
+.svgMap {
+    width: 100%;
+    max-height: 280px;
+    height: auto;
+}
+
+.svgRegionPath {
+    fill: var(--go-ui-color-separator);
+    stroke: var(--go-ui-color-text-on-dark);
+    stroke-width: 1.5;
+    cursor: pointer;
+    transition: fill 0.2s, stroke-width 0.2s;
+}
+
+.svgRegionPath:hover {
+    fill: rgba(200, 31, 47, 0.15);
+    stroke: var(--go-ui-color-primary-red);
+    stroke-width: 2;
+}
+
+.svgRegionPath[data-active='true'] {
+    fill: rgba(200, 31, 47, 0.35);
+    stroke: var(--go-ui-color-primary-red);
+    stroke-width: 2.5;
+}
+
+.svgRiverBasinLine {
+    fill: none;
+    stroke: var(--go-ui-color-primary-blue);
+    stroke-width: 2.5;
+    stroke-dasharray: 4 2;
+    pointer-events: none;
+}
+
+.svgDistrictMarker {
+    fill: var(--go-ui-color-text-on-dark);
+    stroke: var(--go-ui-color-primary-blue);
+    stroke-width: 1.5;
+    cursor: pointer;
+    transition: fill 0.2s, r 0.2s;
+}
+.svgDistrictMarker:hover {
+    fill: var(--go-ui-color-primary-blue);
+    r: 6;
+}
+.svgDistrictMarker[data-active='true'] {
+    fill: var(--go-ui-color-primary-red);
+    stroke: var(--go-ui-color-text-on-dark);
+    stroke-width: 2;
+    r: 6.5;
+}
+
+.svgBasinMarker {
+    fill: var(--go-ui-color-text-on-dark);
+    stroke: var(--go-ui-color-primary-blue);
+    stroke-width: 1.5;
+    cursor: pointer;
+    transition: fill 0.2s;
+}
+.svgBasinMarker:hover {
+    fill: var(--go-ui-color-primary-blue);
+}
+.svgBasinMarker[data-active='true'] {
+    fill: var(--go-ui-color-primary-blue);
+    stroke: var(--go-ui-color-text-on-dark);
+    stroke-width: 2;
+}
+
+.svgGaugeMarker {
+    fill: var(--go-ui-color-text-on-dark);
+    stroke: var(--go-ui-color-warning);
+    stroke-width: 1.5;
+    cursor: pointer;
+    transition: fill 0.2s, r 0.2s;
+}
+.svgGaugeMarker:hover {
+    fill: var(--go-ui-color-warning);
+    r: 5.5;
+}
+.svgGaugeMarker[data-active='true'] {
+    fill: var(--go-ui-color-warning);
+    stroke: var(--go-ui-color-text-on-dark);
+    stroke-width: 2;
+    r: 6;
+}
+
+.svgMapLegenda {
+    flex: 1.5;
+    min-width: 15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.legendaHeader {
+    margin: 0;
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    color: var(--go-ui-color-text-light);
+    letter-spacing: 0.05em;
+}
+
+.legendaInstructions {
+    margin: 0 0 0.5rem;
+    font-size: var(--go-ui-font-size-md);
+    color: var(--go-ui-color-text-light);
+    line-height: var(--go-ui-line-height-sm);
+}
+
+.legendaList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: 180px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.legendaItemBtn {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    background: var(--go-ui-color-text-on-dark);
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-md);
+    padding: var(--go-ui-spacing-2xs) var(--go-ui-spacing-sm);
+    font-size: var(--go-ui-font-size-md);
+    font-weight: var(--go-ui-font-weight-semibold);
+    color: var(--go-ui-color-text);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.legendaItemBtn:hover {
+    background: var(--go-ui-color-background);
+    border-color: var(--go-ui-color-primary-blue);
+}
+
+.legendaItemBtn[data-active='true'] {
+    background: rgba(200, 31, 47, 0.06);
+    border-color: var(--go-ui-color-primary-red);
+    color: var(--go-ui-color-primary-red);
+}
+
+/* Global Header & Navigation Styles */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    background-color: var(--go-ui-color-foreground);
+
+    .top {
+        border-bottom: var(--go-ui-width-separator-md) solid var(--go-ui-color-primary-red);
+    }
+
+    .topContent {
+        padding: var(--go-ui-spacing-sm) var(--go-ui-spacing-lg);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: var(--go-ui-page-width-max);
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+    }
+
+    .topRightActions {
+        display: flex;
+        align-items: center;
+        gap: var(--go-ui-spacing-sm);
+    }
+
+    .navLinks {
+        display: flex;
+        align-items: center;
+        gap: var(--go-ui-spacing-lg);
+    }
+
+    .goIcon {
+        height: var(--go-ui-height-brand-icon);
+        display: block;
+    }
+
+    .bottomContent {
+        padding: var(--go-ui-spacing-md) var(--go-ui-spacing-lg);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: var(--go-ui-page-width-max);
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .searchContainer {
+        flex-basis: 30rem;
+    }
+
+    @media print {
+        display: none;
+    }
+}
+
+/* Global Footer Styles */
+.footer {
+    background-color: var(--go-ui-color-primary-gray);
+    padding: var(--go-ui-spacing-xl) var(--go-ui-spacing-lg);
+    margin-top: auto;
+    width: 100%;
+
+    * {
+        color: var(--go-ui-color-text-on-dark);
+    }
+
+    .footerAboutText {
+        font-size: var(--go-ui-font-size-sm);
+        line-height: var(--go-ui-line-height-md);
+        color: var(--go-ui-color-text-on-dark);
+    }
+
+    .footerCopyright {
+        font-size: var(--go-ui-font-size-xs);
+        color: var(--go-ui-color-text-on-dark);
+        margin-top: 0.5rem;
+    }
+
+    .footerCopyrightLink {
+        color: var(--go-ui-color-text-on-dark);
+        text-decoration: none;
+    }
+
+    .footerCopyrightLink:hover {
+        text-decoration: underline;
+    }
+
+    .footerLink {
+        color: var(--go-ui-color-text-on-dark);
+        text-decoration: none;
+        font-size: var(--go-ui-font-size-sm);
+    }
+
+    .footerLink:hover {
+        text-decoration: underline;
+    }
+
+    .footerContactBtn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--go-ui-color-primary-red);
+        color: var(--go-ui-color-white);
+        font-size: var(--go-ui-font-size-sm);
+        font-weight: var(--go-ui-font-weight-semibold);
+        text-decoration: none;
+        padding: var(--go-ui-spacing-xs) var(--go-ui-spacing-md);
+        border-radius: 9999px;
+        align-self: flex-start;
+        transition: background-color 0.15s;
+    }
+
+    .footerContactBtn:hover {
+        background-color: var(--go-ui-color-primary-red-dark);
+    }
+
+    .footerSocialIcon {
+        color: var(--go-ui-color-text-on-dark);
+        font-size: var(--go-ui-height-social-icon);
+        transition: color 0.15s;
+    }
+
+    .footerSocialIcon:hover {
+        color: var(--go-ui-color-white);
+    }
+
+    @media print {
+        display: none;
+    }
+}
+
+/* Stage 9: Review State Machine */
+
+.reviewStateBanner {
+    width: 100%;
+}
+
+.reviewStateBannerSaved {
+    width: 100%;
+    border-left: var(--go-ui-width-separator-thick) solid var(--go-ui-color-separator);
+}
+
+.reviewStateBannerSuccess {
+    width: 100%;
+    border-left: var(--go-ui-width-separator-thick) solid var(--go-ui-color-success);
+}
+
+.generatingBanner {
+    width: 100%;
+}
+
+.structuralPreviewText {
+    margin: 0;
+    padding: var(--go-ui-spacing-md);
+    font-family: var(--go-ui-font-family-mono, 'Courier New', monospace);
+    font-size: var(--go-ui-font-size-md);
+    line-height: var(--go-ui-line-height-md);
+    color: var(--go-ui-color-text);
+    background: var(--go-ui-color-background);
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-md);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.previewStatusRow {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: var(--go-ui-spacing-sm);
+}
+
+.reviewOutputStack {
+    display: grid;
+    gap: var(--go-ui-spacing-md);
+}
+
+.comparisonTabStack {
+    padding-bottom: var(--go-ui-spacing-md);
+}
+
+.comparisonGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--go-ui-spacing-md);
+}
+
+.comparisonPanel {
+    display: grid;
+    gap: var(--go-ui-spacing-sm);
+    padding: var(--go-ui-spacing-md);
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-md);
+    background: var(--go-ui-color-background);
+}
+
+.comparisonPanelHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--go-ui-spacing-sm);
+    flex-wrap: wrap;
+}
+
+.comparisonPanelTitle {
+    color: var(--go-ui-color-text);
+    font-size: var(--go-ui-font-size-sm);
+    font-weight: var(--go-ui-font-weight-bold);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.comparisonTextAreaInput {
+    min-height: 16rem;
+    background: var(--go-ui-color-foreground);
+    font-family: var(--go-ui-font-family-mono, 'Courier New', monospace);
+}
+
+.comparisonPanelHint {
+    color: var(--go-ui-color-text-light);
+}
+
+.reviewSegmentPanel {
+    padding: var(--go-ui-spacing-md);
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-md);
+    background: var(--go-ui-color-background);
+    animation: riseIn 0.4s ease both;
+}
+
+.reviewCombinedPanel {
+    padding: var(--go-ui-spacing-md);
+    border: var(--go-ui-width-separator-md) solid var(--go-ui-color-primary-red);
+    border-radius: var(--go-ui-border-radius-md);
+    background: rgba(200, 31, 47, 0.03);
+    animation: riseIn 0.5s ease both;
+}
+
+.reviewSegmentHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--go-ui-spacing-sm);
+    margin-bottom: var(--go-ui-spacing-sm);
+    flex-wrap: wrap;
+}
+
+.reviewSegmentLabel {
+    font-size: var(--go-ui-font-size-md);
+    font-weight: var(--go-ui-font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--go-ui-color-text);
+}
+
+.reviewCombinedPanel .reviewSegmentLabel {
+    color: var(--go-ui-color-primary-red);
+}
+
+.reviewSegmentMeta {
+    color: var(--go-ui-color-text-light);
+    font-size: var(--go-ui-font-size-sm);
+    white-space: nowrap;
+}
+
+.reviewSegmentText {
+    margin: 0;
+    font-size: var(--go-ui-font-size-md);
+    line-height: var(--go-ui-line-height-md);
+    color: var(--go-ui-color-text);
+}
+
+.reviewCombinedPanel .reviewSegmentText {
+    font-style: italic;
+    font-weight: var(--go-ui-font-weight-medium);
+}
+
+.reviewActionRow {
+    display: flex;
+    align-items: center;
+    gap: var(--go-ui-spacing-md);
+    padding-top: var(--go-ui-spacing-sm);
+    flex-wrap: wrap;
+}
+
+.reviewActionHint {
+    color: var(--go-ui-color-text-light);
+    font-size: var(--go-ui-font-size-md);
+}
+
+.saveRedirectModalBody {
+    padding: var(--go-ui-spacing-lg);
+    text-align: center;
+}
+
+.saveRedirectModalTitleWrap {
+    margin-bottom: var(--go-ui-spacing-lg);
+    color: var(--go-ui-color-primary-red);
+}
+
+.saveRedirectModalText {
+    margin: 0 0 var(--go-ui-spacing-lg);
+    color: var(--go-ui-color-text);
+    line-height: var(--go-ui-line-height-md);
+}
+
+.saveRedirectModalActions {
+    display: flex;
+    justify-content: center;
+    gap: var(--go-ui-spacing-md);
+    margin-top: var(--go-ui-spacing-lg);
+}

@@ -15,7 +15,8 @@ import pkg from './package.json';
 import envConfig from './env';
 
 /* Get commit hash */
-const commitHash = execSync('git rev-parse --short HEAD').toString();
+const commitHash = process.env.APP_COMMIT_HASH?.trim()
+    || execSync('git rev-parse --short HEAD').toString().trim();
 
 export default defineConfig(({ mode }) => {
     const isProd = mode === 'production';

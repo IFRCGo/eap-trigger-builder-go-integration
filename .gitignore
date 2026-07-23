@@ -41,3 +41,6 @@ storybook-static/
 
 # Helm
 .helm-charts/
+
+# Graphify generated local state
+.graphify/

@@ -1,0 +1,85 @@
+.selectorStack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--go-ui-spacing-md);
+}
+
+.mapFrame {
+    position: relative;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-md);
+    min-height: 24rem;
+    overflow: hidden;
+}
+
+.mapCanvas {
+    width: 100%;
+    min-height: 24rem;
+}
+
+.mapLoading {
+    display: grid;
+    position: absolute;
+    background: var(--go-ui-color-background);
+    color: var(--go-ui-color-text-light);
+    inset: 0;
+    place-items: center;
+}
+
+.keyboardSelectionRow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--go-ui-spacing-md);
+}
+
+.searchRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--go-ui-spacing-sm);
+}
+
+.suggestionList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--go-ui-spacing-2xs);
+}
+
+.suggestionButton {
+    justify-content: flex-start;
+    text-align: start;
+}
+
+.selectionCard {
+    display: flex;
+    flex-direction: column;
+    border: var(--go-ui-width-separator-thin) solid var(--go-ui-color-separator);
+    border-radius: var(--go-ui-border-radius-md);
+    background: var(--go-ui-color-background);
+    padding: var(--go-ui-spacing-md);
+    gap: var(--go-ui-spacing-sm);
+}
+
+.selectionTitle {
+    margin: 0;
+    font-weight: var(--go-ui-font-weight-semibold);
+}
+
+.selectionMeta {
+    margin: 0;
+    color: var(--go-ui-color-text-light);
+}
+
+.actionRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--go-ui-spacing-sm);
+}
+
+@media (max-width: 48rem) {
+    .searchRow {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

@@ -16,6 +16,7 @@ export default defineConfig({
         return value as ('production' | 'staging' | 'testing' | `alpha-${number}` | 'development' | 'APP_ENVIRONMENT_PLACEHOLDER');
     },
     APP_API_ENDPOINT: Schema.string({ format: 'url', protocol: true, tld: false }),
+    APP_TRIGGER_BUILDER_API_ENDPOINT: Schema.string({ format: 'url', protocol: true, tld: false }),
 
     APP_TRANSLATION_API_ENDPOINT: Schema.string({ format: 'url', protocol: true, tld: false }),
 

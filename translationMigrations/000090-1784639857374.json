@@ -1,0 +1,89 @@
+{
+    "parent": "000089-1784639069045.json",
+    "actions": [
+        {
+            "action": "add",
+            "key": "accessCodeContinueButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Continue"
+        },
+        {
+            "action": "add",
+            "key": "accessCodeDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Enter the temporary access code to generate the Trigger statement. It is kept only for this browser session."
+        },
+        {
+            "action": "add",
+            "key": "accessCodeInputLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Access code"
+        },
+        {
+            "action": "add",
+            "key": "accessCodeModalHeading",
+            "namespace": "eapTriggerBuilder",
+            "value": "Prototype access code"
+        },
+        {
+            "action": "add",
+            "key": "connectorRequiredError",
+            "namespace": "eapTriggerBuilder",
+            "value": "Choose a connector before generating."
+        },
+        {
+            "action": "add",
+            "key": "generateButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Generate"
+        },
+        {
+            "action": "add",
+            "key": "generationProcessingMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "Processing the Trigger statement..."
+        },
+        {
+            "action": "add",
+            "key": "generationRetryMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "The Trigger statement could not be generated. Please try again."
+        },
+        {
+            "action": "add",
+            "key": "generationValidationErrorMessage",
+            "namespace": "eapTriggerBuilder",
+            "value": "Complete the highlighted fields before generating the Trigger statement."
+        },
+        {
+            "action": "add",
+            "key": "requiredFieldError",
+            "namespace": "eapTriggerBuilder",
+            "value": "This field is required before generating."
+        },
+        {
+            "action": "add",
+            "key": "triggerStatementDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "Generate the statement with AI from the structured trigger fields, then edit the wording if needed."
+        },
+        {
+            "action": "add",
+            "key": "triggerStatementLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "AI-generated Trigger statement"
+        },
+        {
+            "action": "add",
+            "key": "triggerStatementPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Generate the Trigger statement to begin editing."
+        },
+        {
+            "action": "add",
+            "key": "triggerStatementTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Trigger statement"
+        }
+    ]
+}

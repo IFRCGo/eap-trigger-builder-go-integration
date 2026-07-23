@@ -46,6 +46,12 @@
                 "src/**/*.tsx!",
                 "src/**/*.ts!"
             ]
+        },
+        "packages/trigger-builder-prototype": {
+            "entry": [
+                "public/env-config.js",
+                "scripts/*.mjs"
+            ]
         }
     }
 }

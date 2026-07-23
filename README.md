@@ -73,6 +73,36 @@ To begin, ensure you have network access. Then, you'll need the following:
    pnpm start
    ```
 
+### Docker Workflow
+
+From `go-web-app`, build and host the GO-integrated Trigger Builder, its backend,
+and the preserved standalone prototype together:
+
+```bash
+docker compose up --build -d
+```
+
+| Service | Local URL |
+| --- | --- |
+| GO app and integrated Trigger Builder | `http://127.0.0.1:3000/eap-trigger-builder` |
+| Trigger Builder backend | `http://127.0.0.1:8000/api/trigger-builder/schema` |
+| Preserved standalone prototype | `http://127.0.0.1:3101` |
+
+After every implementation stage, rebuild these images with the same command,
+wait for all services to become healthy, and run Playwright visual checks against
+the three URLs. Do not deploy the new GO-integrated frontend to Google Cloud until
+all planned stages and local Docker acceptance checks pass. The existing standalone
+prototype remains unchanged locally and in Cloud Run.
+
+If you only want the prototype container:
+
+```bash
+docker compose up --build -d trigger-builder-prototype
+```
+
+> [!NOTE]\
+> The prototype image builds from the repository root because it needs the shared `implementation_inputs` bundle created during Stage 1.
+
 ## Contributing
 
 * Check out existing [Issues](https://github.com/IFRCGo/go-web-app/issues) and [Pull Requests](https://github.com/IFRCGo/go-web-app/pulls) to contribute.
