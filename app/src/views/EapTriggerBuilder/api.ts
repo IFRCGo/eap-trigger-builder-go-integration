@@ -1,6 +1,5 @@
 import { triggerBuilderApi } from '#config';
 
-import IncompleteGenerationError from './IncompleteGenerationError';
 import type {
     Option,
     PilotExample,
@@ -10,7 +9,6 @@ import type {
     TriggerBuilderSchema,
 } from './types';
 
-const prototypeAccessStorageKey = 'trigger-builder-prototype.access-code';
 const generationTimeoutMs = 160_000;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -146,39 +144,6 @@ async function getJson(path: string, signal: AbortSignal): Promise<unknown> {
     return response.json() as Promise<unknown>;
 }
 
-export class PrototypeAccessError extends Error {
-    constructor() {
-        super('The prototype access code was rejected.');
-        this.name = 'PrototypeAccessError';
-    }
-}
-
-export { IncompleteGenerationError };
-
-export function getPrototypeAccessCode(): string {
-    try {
-        return sessionStorage.getItem(prototypeAccessStorageKey)?.trim() ?? '';
-    } catch {
-        return '';
-    }
-}
-
-export function setPrototypeAccessCode(value: string): void {
-    try {
-        if (value.trim()) {
-            sessionStorage.setItem(prototypeAccessStorageKey, value.trim());
-        } else {
-            sessionStorage.removeItem(prototypeAccessStorageKey);
-        }
-    } catch {
-        // The code is still used for the current request if session storage is unavailable.
-    }
-}
-
-export function clearPrototypeAccessCode(): void {
-    setPrototypeAccessCode('');
-}
-
 function buildGeneratePayload(draft: TriggerBuilderDraft, hazardTypes: string[]) {
     const countryName = draft.country?.name ?? '';
     const eapName = draft.selectedPilotName?.trim()
@@ -233,59 +198,9 @@ function buildGeneratePayload(draft: TriggerBuilderDraft, hazardTypes: string[])
     };
 }
 
-function normalizeFactText(value: string): string {
-    return value
-        .normalize('NFKD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLocaleLowerCase()
-        .replace(/[^a-z0-9%]+/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-}
-
-function escapeRegExp(value: string): string {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function getRequiredGenerationFacts(draft: TriggerBuilderDraft): string[] {
-    return draft.triggers.flatMap((trigger) => (
-        (trigger.generationNotes ?? '')
-            .split(/[;\r\n]+/)
-            .map((fact) => fact.trim())
-            .filter(Boolean)
-    ));
-}
-
-function hasRequiredGenerationFact(statement: string, fact: string): boolean {
-    const normalizedStatement = normalizeFactText(statement);
-    const separatorIndex = fact.indexOf(':');
-    if (separatorIndex < 0) {
-        return normalizedStatement.includes(normalizeFactText(fact));
-    }
-
-    const label = normalizeFactText(fact.slice(0, separatorIndex));
-    const value = normalizeFactText(fact.slice(separatorIndex + 1));
-    if (!label || !value) {
-        return normalizedStatement.includes(normalizeFactText(fact));
-    }
-
-    const escapedLabel = escapeRegExp(label);
-    const escapedValue = escapeRegExp(value);
-    const shortLink = '(?: [a-z0-9%]+){0,6} ';
-    const labelThenValue = new RegExp(
-        `(?:^| )${escapedLabel}${shortLink}${escapedValue}(?: |$)`,
-    );
-    const valueThenLabel = new RegExp(
-        `(?:^| )${escapedValue}${shortLink}${escapedLabel}(?: |$)`,
-    );
-
-    return labelThenValue.test(normalizedStatement) || valueThenLabel.test(normalizedStatement);
-}
-
 async function postGeneration(
     draft: TriggerBuilderDraft,
     hazardTypes: string[],
-    accessCode: string,
     signal: AbortSignal,
 ): Promise<unknown> {
     const requestController = new AbortController();
@@ -303,7 +218,6 @@ async function postGeneration(
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Prototype-Access-Code': accessCode,
             },
             body: JSON.stringify(buildGeneratePayload(draft, hazardTypes)),
             signal: requestController.signal,
@@ -313,9 +227,6 @@ async function postGeneration(
         signal.removeEventListener('abort', abortRequest);
     }
 
-    if (response.status === 401 || response.status === 403) {
-        throw new PrototypeAccessError();
-    }
     if (!response.ok) {
         throw new Error(`Trigger Builder API returned ${response.status}.`);
     }
@@ -326,10 +237,9 @@ async function postGeneration(
 export async function generateTriggerStatement(
     draft: TriggerBuilderDraft,
     hazardTypes: string[],
-    accessCode: string,
     signal: AbortSignal,
 ): Promise<string> {
-    const response = await postGeneration(draft, hazardTypes, accessCode, signal);
+    const response = await postGeneration(draft, hazardTypes, signal);
     if (!isRecord(response) || !isRecord(response.reviewOutput)) {
         throw new Error('Invalid Trigger Builder generation response.');
     }
@@ -339,13 +249,6 @@ export async function generateTriggerStatement(
     const statement = activation || combined;
     if (!statement) {
         throw new Error('Trigger Builder generation returned no activation statement.');
-    }
-
-    const missingFacts = getRequiredGenerationFacts(draft).filter(
-        (fact) => !hasRequiredGenerationFact(statement, fact),
-    );
-    if (missingFacts.length > 0) {
-        throw new IncompleteGenerationError(missingFacts);
     }
 
     return statement;

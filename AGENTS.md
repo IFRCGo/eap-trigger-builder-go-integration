@@ -34,7 +34,7 @@ provides the real GO navigation and footer.
   or old AI review workspace.
 - Keep structured form data authoritative. The Trigger statement is generated through AI,
   remains editable, and is included in browser save/share data.
-- Never store or share the prototype access code.
+- The GO-integrated page must not request, store, or send a prototype access code.
 
 ## Runtime configuration
 
@@ -46,8 +46,9 @@ provides the real GO navigation and footer.
 
 Add `APP_TRIGGER_BUILDER_API_ENDPOINT` through `app/env.ts`, `app/src/config.ts`, Docker,
 Helm, and `nginx-serve/apply-config.sh` using the current runtime substitution pattern.
-Generate sends `X-Prototype-Access-Code` from `sessionStorage` only. The preserved
-standalone prototype may still use Regenerate; the new GO page does not.
+Generate calls the public standalone API without an access-code header. The preserved
+standalone prototype may still use its existing access flow and Regenerate; the new GO
+page uses neither.
 
 ## Primary commands
 
@@ -68,11 +69,14 @@ docker compose up --build -d
 
 Do not make live Gemini calls in normal automated tests.
 
-After every implementation stage, rebuild all three Docker services and use
-Playwright to inspect the integrated route at `http://127.0.0.1:3000/eap-trigger-builder`,
-the backend at `http://127.0.0.1:8000`, and the unchanged prototype at
-`http://127.0.0.1:3101`. Do not deploy `trigger-builder-go-frontend` to Google
-Cloud until every planned stage and the local Docker acceptance gate are complete.
+Before a future release, rebuild the affected Docker services and use
+Playwright to inspect the integrated route, backend, and unchanged prototype.
+For the current rollout, the 2026-07-23 live Google Cloud run completed the six
+validated pilots' card-count, mapped-field, and Generate-payload checks. The
+unitless-threshold and generated-statement display defects are fixed and
+live-verified. Do not call browser acceptance complete until the representative
+save/share/Mapbox/layout workflows and final statement comparison recorded in
+the integration status file have passed.
 
 ## Graphify workflow
 

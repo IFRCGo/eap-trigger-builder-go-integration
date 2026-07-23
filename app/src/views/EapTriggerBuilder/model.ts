@@ -327,7 +327,6 @@ export function getGenerationValidationErrors(
             subcategory: !trigger.subcategory.trim(),
             operator: !trigger.operator.trim(),
             thresholdValue: !trigger.thresholdValue.trim(),
-            thresholdUnit: !trigger.thresholdUnit.trim(),
             geography: trigger.geographyType !== 'national'
                 && !trigger.geographyConfirmed,
         };

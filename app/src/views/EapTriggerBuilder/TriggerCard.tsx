@@ -295,10 +295,6 @@ function TriggerCard(props: Props) {
                             name={undefined}
                             label={strings.unitLabel}
                             placeholder={strings.unitPlaceholder}
-                            error={errors?.thresholdUnit
-                                ? strings.requiredFieldError
-                                : undefined}
-                            required
                             value={trigger.thresholdUnit || undefined}
                             options={unitOptions}
                             keySelector={optionKeySelector}
@@ -309,10 +305,6 @@ function TriggerCard(props: Props) {
                         <TextInput
                             name={undefined}
                             label={strings.unitLabel}
-                            error={errors?.thresholdUnit
-                                ? strings.requiredFieldError
-                                : undefined}
-                            required
                             value={trigger.thresholdUnit}
                             onChange={(value) => onChange({ thresholdUnit: value ?? '' })}
                         />

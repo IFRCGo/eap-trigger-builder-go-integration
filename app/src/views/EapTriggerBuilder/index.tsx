@@ -16,8 +16,6 @@ import {
     InputSection,
     ListView,
     Message,
-    Modal,
-    PasswordInput,
     SelectInput,
     Tab,
     TabList,
@@ -32,14 +30,7 @@ import useCountry, { type Country } from '#hooks/domain/useCountry';
 import useAlert from '#hooks/useAlert';
 import useRouting from '#hooks/useRouting';
 
-import getReferenceData, {
-    clearPrototypeAccessCode,
-    generateTriggerStatement,
-    getPrototypeAccessCode,
-    IncompleteGenerationError,
-    PrototypeAccessError,
-    setPrototypeAccessCode,
-} from './api';
+import getReferenceData, { generateTriggerStatement } from './api';
 import {
     createBlankDraft,
     createBlankSource,
@@ -59,6 +50,7 @@ import {
     saveTriggerBuilderDraft,
     shareTriggerBuilderDraft,
 } from './persistence';
+import SupplementaryFields from './SupplementaryFields';
 import TriggerCard from './TriggerCard';
 import type {
     ForecastSource,
@@ -106,10 +98,7 @@ export function Component() {
     const [sharing, setSharing] = useState(false);
     const [generating, setGenerating] = useState(false);
     const [generationFailed, setGenerationFailed] = useState(false);
-    const [generationIncomplete, setGenerationIncomplete] = useState(false);
     const [validationAttempted, setValidationAttempted] = useState(false);
-    const [accessCodePromptOpen, setAccessCodePromptOpen] = useState(false);
-    const [accessCodeInput, setAccessCodeInput] = useState('');
     const generationControllerRef = useRef<AbortController | undefined>(undefined);
     const [activeGeographyTriggerId, setActiveGeographyTriggerId] = useState<
         string | undefined
@@ -245,7 +234,6 @@ export function Component() {
         generationControllerRef.current = undefined;
         setGenerating(false);
         setGenerationFailed(false);
-        setGenerationIncomplete(false);
         setValidationAttempted(false);
         if (referenceData.status !== 'ready' || !pilotId) {
             setDraft((currentDraft) => createBlankDraft(currentDraft.country));
@@ -383,7 +371,6 @@ export function Component() {
         generationControllerRef.current = undefined;
         setGenerating(false);
         setGenerationFailed(false);
-        setGenerationIncomplete(false);
         setValidationAttempted(false);
         const restoredDraft = savedDraft ?? createBlankDraft();
         setDraft(restoredDraft);
@@ -394,17 +381,23 @@ export function Component() {
         }
     };
 
-    const handleSaveAndClose = () => {
+    const handleSave = () => {
         const result = saveTriggerBuilderDraft(draft);
         if (result.status !== 'saved') {
             alert.show(strings.draftSaveErrorMessage, { variant: 'danger' });
-            return;
+            return false;
         }
 
         setSavedDraft(result.draft);
         setSavedFingerprint(getDraftFingerprint(result.draft));
         alert.show(strings.draftSaveSuccessMessage, { variant: 'success' });
-        navigate('home');
+        return true;
+    };
+
+    const handleSaveAndClose = () => {
+        if (handleSave()) {
+            navigate('home');
+        }
     };
 
     const handleShare = async () => {
@@ -428,10 +421,7 @@ export function Component() {
         }
     };
 
-    const requestGeneration = async (
-        draftToGenerate: TriggerBuilderDraft,
-        accessCode: string,
-    ) => {
+    const requestGeneration = async (draftToGenerate: TriggerBuilderDraft) => {
         if (generationControllerRef.current) {
             return;
         }
@@ -441,7 +431,6 @@ export function Component() {
         generationControllerRef.current = controller;
         setGenerating(true);
         setGenerationFailed(false);
-        setGenerationIncomplete(false);
 
         try {
             const pilotName = draftToGenerate.selectedPilotName?.toLocaleLowerCase() ?? '';
@@ -451,7 +440,6 @@ export function Component() {
             const statement = await generateTriggerStatement(
                 draftToGenerate,
                 hazardTypes,
-                accessCode,
                 controller.signal,
             );
             if (generationControllerRef.current !== controller) {
@@ -467,17 +455,11 @@ export function Component() {
                     : currentDraft
             ));
             setValidationAttempted(false);
-        } catch (error) {
+        } catch {
             if (generationControllerRef.current !== controller) {
                 return;
             }
             setGenerationFailed(true);
-            setGenerationIncomplete(error instanceof IncompleteGenerationError);
-            if (error instanceof PrototypeAccessError) {
-                clearPrototypeAccessCode();
-                setAccessCodeInput('');
-                setAccessCodePromptOpen(true);
-            }
         } finally {
             if (generationControllerRef.current === controller) {
                 generationControllerRef.current = undefined;
@@ -486,15 +468,14 @@ export function Component() {
         }
     };
 
-    const startGeneration = (accessCode: string) => {
+    const startGeneration = () => {
         setValidationAttempted(true);
         setGenerationFailed(false);
-        setGenerationIncomplete(false);
         if (getGenerationValidationErrors(draft)) {
             return;
         }
 
-        requestGeneration(draft, accessCode).catch(() => undefined);
+        requestGeneration(draft).catch(() => undefined);
     };
 
     const handleGenerate = () => {
@@ -502,113 +483,85 @@ export function Component() {
             return;
         }
 
-        const accessCode = getPrototypeAccessCode();
-        if (!accessCode) {
-            setValidationAttempted(true);
-            setGenerationFailed(false);
-            setGenerationIncomplete(false);
-            if (!getGenerationValidationErrors(draft)) {
-                setAccessCodePromptOpen(true);
-            }
-            return;
-        }
-
-        startGeneration(accessCode);
-    };
-
-    const handleAccessCodePromptClose = () => {
-        setAccessCodeInput('');
-        setAccessCodePromptOpen(false);
-    };
-
-    const handleAccessCodeSubmit = () => {
-        const accessCode = accessCodeInput.trim();
-        if (!accessCode) {
-            return;
-        }
-
-        setPrototypeAccessCode(accessCode);
-        setAccessCodeInput('');
-        setAccessCodePromptOpen(false);
-        startGeneration(accessCode);
+        startGeneration();
     };
 
     return (
-        <>
-            <Tabs
-                value="triggerModel"
-                onChange={keepTriggerModelActive}
-                styleVariant="step"
+        <Tabs
+            value="triggerModel"
+            onChange={keepTriggerModelActive}
+            styleVariant="step"
+        >
+            <Page
+                title={strings.pageTitle}
+                heading={draft.selectedPilotName ?? strings.pageHeading}
+                description={strings.pageDescription}
+                withBackgroundColorInMainSection
+                actions={(
+                    <>
+                        {isDirty ? (
+                            <ConfirmButton
+                                name={undefined}
+                                confirmMessage={strings.cancelConfirmMessage}
+                                onConfirm={handleCancel}
+                            >
+                                {strings.cancelButtonLabel}
+                            </ConfirmButton>
+                        ) : (
+                            <Button
+                                name={undefined}
+                                onClick={handleCancel}
+                            >
+                                {strings.cancelButtonLabel}
+                            </Button>
+                        )}
+                        <Button
+                            name={undefined}
+                            styleVariant="filled"
+                            onClick={handleSaveAndClose}
+                        >
+                            {strings.saveAndCloseButtonLabel}
+                        </Button>
+                        <Button
+                            name={undefined}
+                            before={<ShareFillIcon />}
+                            onClick={handleShare}
+                            disabled={sharing}
+                        >
+                            {strings.shareButtonLabel}
+                        </Button>
+                    </>
+                )}
+                info={(
+                    <TabList>
+                        <Tab name="overview" step={1} disabled>
+                            {strings.overviewStepLabel}
+                        </Tab>
+                        <Tab name="riskAnalysis" step={2} disabled>
+                            {strings.riskAnalysisStepLabel}
+                        </Tab>
+                        <Tab name="triggerModel" step={3}>
+                            {strings.triggerModelStepLabel}
+                        </Tab>
+                        <Tab name="selectionActions" step={4} disabled>
+                            {strings.selectionActionsStepLabel}
+                        </Tab>
+                        <Tab name="eapActivation" step={5} disabled>
+                            {strings.activationProcessStepLabel}
+                        </Tab>
+                        <Tab name="meal" step={6} disabled>
+                            {strings.mealStepLabel}
+                        </Tab>
+                        <Tab name="nationalSocietyCapacity" step={7} disabled>
+                            {strings.nationalSocietyCapacityStepLabel}
+                        </Tab>
+                        <Tab name="financeLogistics" step={8} disabled>
+                            {strings.financeLogisticsStepLabel}
+                        </Tab>
+                    </TabList>
+                )}
             >
-                <Page
-                    title={strings.pageTitle}
-                    heading={draft.selectedPilotName ?? strings.pageHeading}
-                    description={strings.pageDescription}
-                    withBackgroundColorInMainSection
-                    actions={(
-                        <>
-                            {isDirty ? (
-                                <ConfirmButton
-                                    name={undefined}
-                                    confirmMessage={strings.cancelConfirmMessage}
-                                    onConfirm={handleCancel}
-                                >
-                                    {strings.cancelButtonLabel}
-                                </ConfirmButton>
-                            ) : (
-                                <Button
-                                    name={undefined}
-                                    onClick={handleCancel}
-                                >
-                                    {strings.cancelButtonLabel}
-                                </Button>
-                            )}
-                            <Button
-                                name={undefined}
-                                styleVariant="filled"
-                                onClick={handleSaveAndClose}
-                            >
-                                {strings.saveAndCloseButtonLabel}
-                            </Button>
-                            <Button
-                                name={undefined}
-                                before={<ShareFillIcon />}
-                                onClick={handleShare}
-                                disabled={sharing}
-                            >
-                                {strings.shareButtonLabel}
-                            </Button>
-                        </>
-                    )}
-                    info={(
-                        <TabList>
-                            <Tab name="overview" step={1} disabled>
-                                {strings.overviewStepLabel}
-                            </Tab>
-                            <Tab name="riskAnalysis" step={2} disabled>
-                                {strings.riskAnalysisStepLabel}
-                            </Tab>
-                            <Tab name="triggerModel" step={3}>
-                                {strings.triggerModelStepLabel}
-                            </Tab>
-                            <Tab name="selectionActions" step={4} disabled>
-                                {strings.selectionActionsStepLabel}
-                            </Tab>
-                            <Tab name="eapActivation" step={5} disabled>
-                                {strings.activationProcessStepLabel}
-                            </Tab>
-                            <Tab name="meal" step={6} disabled>
-                                {strings.mealStepLabel}
-                            </Tab>
-                            <Tab name="nationalSocietyCapacity" step={7} disabled>
-                                {strings.nationalSocietyCapacityStepLabel}
-                            </Tab>
-                            <Tab name="financeLogistics" step={8} disabled>
-                                {strings.financeLogisticsStepLabel}
-                            </Tab>
-                        </TabList>
-                    )}
-                >
+                <ListView layout="block" spacing="lg">
                     <Container
                         heading={strings.triggerModelHeading}
                         headingLevel={2}
@@ -657,14 +610,14 @@ export function Component() {
                                     />
                                 )}
                                 {referenceData.status === 'ready'
-                                && referenceData.data.examples.length === 0 && (
+                                    && referenceData.data.examples.length === 0 && (
                                     <Message
                                         title={strings.pilotEmptyTitle}
                                         description={strings.pilotEmptyDescription}
                                     />
                                 )}
                                 {referenceData.status === 'ready'
-                                && referenceData.data.examples.length > 0 && (
+                                    && referenceData.data.examples.length > 0 && (
                                     <SelectInput
                                         name={undefined}
                                         label={strings.pilotSelectLabel}
@@ -711,11 +664,16 @@ export function Component() {
                                         canRemove={index > 0}
                                         geographyOpen={activeGeographyTriggerId === trigger.id}
                                         errors={generationErrors?.triggers[trigger.id]}
-                                        onChange={(value) => handleTriggerChange(trigger.id, value)}
+                                        onChange={(value) => handleTriggerChange(
+                                            trigger.id,
+                                            value,
+                                        )}
                                         onRemove={() => handleTriggerRemove(trigger.id)}
                                         onToggleGeography={() => setActiveGeographyTriggerId(
                                             (activeId) => (
-                                                activeId === trigger.id ? undefined : trigger.id
+                                                activeId === trigger.id
+                                                    ? undefined
+                                                    : trigger.id
                                             ),
                                         )}
                                         onSourceChange={(sourceId, value) => (
@@ -737,7 +695,9 @@ export function Component() {
                                                 label={strings.connectorLabel}
                                                 placeholder={strings.connectorPlaceholder}
                                                 value={trigger.connectorToNext}
-                                                error={generationErrors?.connectors.has(trigger.id)
+                                                error={generationErrors?.connectors.has(
+                                                    trigger.id,
+                                                )
                                                     ? strings.connectorRequiredError
                                                     : undefined}
                                                 required
@@ -759,102 +719,67 @@ export function Component() {
                             >
                                 {strings.addTriggerButtonLabel}
                             </Button>
-                            <InputSection
-                                title={strings.triggerStatementTitle}
-                                description={strings.triggerStatementDescription}
-                                withFullWidthContent
-                            >
-                                <ListView
-                                    layout="block"
-                                    spacing="md"
-                                >
-                                    <TextArea
-                                        name={undefined}
-                                        label={strings.triggerStatementLabel}
-                                        placeholder={strings.triggerStatementPlaceholder}
-                                        rows={7}
-                                        value={draft.aiStatement ?? ''}
-                                        disabled={generating || draft.aiStatement === undefined}
-                                        onChange={(value) => setDraft((currentDraft) => ({
-                                            ...currentDraft,
-                                            aiStatement: value ?? '',
-                                        }))}
-                                    />
-                                    {generationErrors && (
-                                        <Message
-                                            compact
-                                            variant="error"
-                                            description={strings.generationValidationErrorMessage}
-                                        />
-                                    )}
-                                    {generationFailed && (
-                                        <Message
-                                            compact
-                                            variant="error"
-                                            description={generationIncomplete
-                                                ? strings.generationIncompleteMessage
-                                                : strings.generationRetryMessage}
-                                        />
-                                    )}
-                                    {generating && (
-                                        <Message
-                                            compact
-                                            pending
-                                            description={strings.generationProcessingMessage}
-                                        />
-                                    )}
-                                    <Button
-                                        name={undefined}
-                                        styleVariant="filled"
-                                        disabled={generating}
-                                        onClick={handleGenerate}
-                                    >
-                                        {strings.generateButtonLabel}
-                                    </Button>
-                                </ListView>
-                            </InputSection>
                         </ListView>
                     </Container>
-                </Page>
-            </Tabs>
-            {accessCodePromptOpen && (
-                <Modal
-                    heading={strings.accessCodeModalHeading}
-                    headerDescription={strings.accessCodeDescription}
-                    onClose={handleAccessCodePromptClose}
-                    size="sm"
-                    footerActions={(
-                        <ListView spacing="sm">
-                            <Button
+                    <InputSection
+                        title={strings.triggerStatementTitle}
+                        description={strings.triggerStatementDescription}
+                        withFullWidthContent
+                    >
+                        <ListView
+                            layout="block"
+                            spacing="md"
+                        >
+                            <TextArea
                                 name={undefined}
-                                onClick={handleAccessCodePromptClose}
-                            >
-                                {strings.cancelButtonLabel}
-                            </Button>
+                                label={strings.triggerStatementLabel}
+                                placeholder={strings.triggerStatementPlaceholder}
+                                rows={7}
+                                value={draft.aiStatement ?? ''}
+                                disabled={generating || draft.aiStatement === undefined}
+                                onChange={(value) => setDraft((currentDraft) => ({
+                                    ...currentDraft,
+                                    aiStatement: value ?? '',
+                                }))}
+                            />
+                            {generationErrors && (
+                                <Message
+                                    compact
+                                    variant="error"
+                                    description={strings.generationValidationErrorMessage}
+                                />
+                            )}
+                            {generationFailed && (
+                                <Message
+                                    compact
+                                    variant="error"
+                                    description={strings.generationRetryMessage}
+                                />
+                            )}
+                            {generating && (
+                                <Message
+                                    compact
+                                    pending
+                                    description={strings.generationProcessingMessage}
+                                />
+                            )}
                             <Button
                                 name={undefined}
                                 styleVariant="filled"
-                                disabled={!accessCodeInput.trim()}
-                                onClick={handleAccessCodeSubmit}
+                                disabled={generating}
+                                onClick={handleGenerate}
                             >
-                                {strings.accessCodeContinueButtonLabel}
+                                {strings.generateButtonLabel}
                             </Button>
                         </ListView>
-                    )}
-                    withHeaderBorder
-                    withFooterBorder
-                >
-                    <PasswordInput
-                        name={undefined}
-                        label={strings.accessCodeInputLabel}
-                        value={accessCodeInput}
-                        onChange={(value) => setAccessCodeInput(value ?? '')}
-                        autoFocus
-                        required
+                    </InputSection>
+                    <SupplementaryFields
+                        countryId={draft.country?.id}
+                        onSave={handleSave}
                     />
-                </Modal>
-            )}
-        </>
+                </ListView>
+            </Page>
+        </Tabs>
     );
 }
 

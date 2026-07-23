@@ -1,0 +1,156 @@
+{
+    "parent": "000090-1784639857374.json",
+    "actions": [
+        {
+            "action": "add",
+            "key": "backButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Back"
+        },
+        {
+            "action": "add",
+            "key": "deleteSourceInformationButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Delete Source Information"
+        },
+        {
+            "action": "add",
+            "key": "generationNotesLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Required generation facts (optional)"
+        },
+        {
+            "action": "add",
+            "key": "generationNotesPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "value": "Add one required fact per line, for example: Lake Chilwa Basin: 150 mm"
+        },
+        {
+            "action": "add",
+            "key": "geographyChangeReferencePinButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Change reference pin"
+        },
+        {
+            "action": "add",
+            "key": "geographyDocumentConfirmedDescription",
+            "namespace": "eapTriggerBuilder",
+            "value": "The complete text defines the target area. Any map pin is an optional reference point, not the area boundary."
+        },
+        {
+            "action": "add",
+            "key": "geographyDocumentConfirmedTitle",
+            "namespace": "eapTriggerBuilder",
+            "value": "Document-defined geography confirmed"
+        },
+        {
+            "action": "add",
+            "key": "geographyReferencePinButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Add optional reference pin"
+        },
+        {
+            "action": "add",
+            "key": "geographyTextConfirmButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Confirm text geography"
+        },
+        {
+            "action": "add",
+            "key": "nextButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Next"
+        },
+        {
+            "action": "add",
+            "key": "noFileSelectedLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "No file selected"
+        },
+        {
+            "action": "add",
+            "key": "saveButtonLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Save"
+        },
+        {
+            "action": "add",
+            "key": "sourceInformationLinkLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Link"
+        },
+        {
+            "action": "add",
+            "key": "sourceInformationNameLabel",
+            "namespace": "eapTriggerBuilder",
+            "value": "Name"
+        },
+        {
+            "action": "remove",
+            "key": "accessCodeContinueButtonLabel",
+            "namespace": "eapTriggerBuilder"
+        },
+        {
+            "action": "remove",
+            "key": "accessCodeDescription",
+            "namespace": "eapTriggerBuilder"
+        },
+        {
+            "action": "remove",
+            "key": "accessCodeInputLabel",
+            "namespace": "eapTriggerBuilder"
+        },
+        {
+            "action": "remove",
+            "key": "accessCodeModalHeading",
+            "namespace": "eapTriggerBuilder"
+        },
+        {
+            "action": "update",
+            "key": "geographyDescription",
+            "namespace": "eapTriggerBuilder",
+            "newValue": "Enter the complete target geography from the EAP. Confirm the text directly, or use map/search for one location or an optional reference pin."
+        },
+        {
+            "action": "update",
+            "key": "geographyLabel",
+            "namespace": "eapTriggerBuilder",
+            "newValue": "Target geography"
+        },
+        {
+            "action": "update",
+            "key": "geographyPlaceholder",
+            "namespace": "eapTriggerBuilder",
+            "newValue": "Enter one place or all document-defined target areas"
+        },
+        {
+            "action": "update",
+            "key": "geographyUnverifiedDescription",
+            "namespace": "eapTriggerBuilder",
+            "newValue": "Confirm the document text, or select and confirm a map location before generation."
+        },
+        {
+            "action": "add",
+            "key": "geographyClearReferencePinButtonLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Clear reference pin"
+        },
+        {
+            "action": "add",
+            "key": "geographyConfirmReferencePinButtonLabel",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "value": "Confirm reference pin"
+        },
+        {
+            "action": "remove",
+            "key": "geographyReverseNoMatchError",
+            "namespace": "eapTriggerBuilderGeographySelector"
+        },
+        {
+            "action": "update",
+            "key": "geographyMapboxUnavailableDescription",
+            "namespace": "eapTriggerBuilderGeographySelector",
+            "newValue": "No runtime Mapbox public token is configured. Map selection is unavailable, but document-defined geography can still be confirmed in the trigger card."
+        }
+    ]
+}

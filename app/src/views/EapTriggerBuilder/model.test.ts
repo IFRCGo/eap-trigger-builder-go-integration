@@ -304,7 +304,6 @@ describe('EAP Trigger Builder model', () => {
             subcategory: true,
             operator: true,
             thresholdValue: true,
-            thresholdUnit: true,
         });
 
         const firstTrigger = {
@@ -322,6 +321,16 @@ describe('EAP Trigger Builder model', () => {
             geographyLabel: 'Southern Region',
             geographyConfirmed: false,
         };
+        expect(getGenerationValidationErrors({
+            ...createBlankDraft(malawiCountry),
+            triggers: [{
+                ...firstTrigger,
+                subcategory: 'Alert-stage station count',
+                thresholdValue: 'alert stage',
+                thresholdUnit: '',
+            }],
+        })).toBeUndefined();
+
         const incompleteDraft = {
             ...createBlankDraft(malawiCountry),
             triggers: [firstTrigger, secondTrigger],

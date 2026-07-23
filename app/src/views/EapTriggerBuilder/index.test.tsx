@@ -15,7 +15,6 @@ import {
     vi,
 } from 'vitest';
 
-import { PrototypeAccessError } from './api';
 import { Component } from './index';
 import { createBlankDraft } from './model';
 import type {
@@ -25,15 +24,12 @@ import type {
 
 const mocks = vi.hoisted(() => ({
     alert: { show: vi.fn() },
-    clearAccessCode: vi.fn(),
     generate: vi.fn(),
-    getAccessCode: vi.fn(),
     getReferenceData: vi.fn(),
     loadDraft: vi.fn(),
     navigate: vi.fn(),
     routing: { navigate: vi.fn() },
     saveDraft: vi.fn(),
-    setAccessCode: vi.fn(),
     shareDraft: vi.fn(),
 }));
 
@@ -45,6 +41,7 @@ vi.mock('@ifrc-go/icons', async () => {
     return {
         AddLineIcon: Icon,
         CheckboxMultipleBlankFillIcon: Icon,
+        DeleteBinTwoLineIcon: Icon,
         ShareFillIcon: Icon,
     };
 });
@@ -201,16 +198,41 @@ vi.mock('@ifrc-go/ui', async () => {
         Button,
         ConfirmButton,
         Container: Wrapper,
+        Description: Wrapper,
+        IconButton: Button,
+        InlineLayout: Wrapper,
+        InlineView: Wrapper,
         InputSection,
+        Label: Wrapper,
         ListView: Wrapper,
         Message,
         Modal,
         PasswordInput: TextInput,
+        RawFileInput: Button,
         SelectInput,
         Tab: Wrapper,
         TabList: Wrapper,
         Tabs: Wrapper,
         TextArea: TextInput,
+        TextInput,
+    };
+});
+
+vi.mock('#components/domain/Admin2Input', async () => {
+    const React = await import('react');
+    return { default: () => React.createElement('div', null, 'Selected Areas') };
+});
+
+vi.mock('#components/ExplanatoryNote', () => ({ default: () => null }));
+
+vi.mock('#components/Link', async () => {
+    const React = await import('react');
+    return {
+        default: ({ children }: { children?: ReactNode }) => React.createElement(
+            'a',
+            { href: '#' },
+            children,
+        ),
     };
 });
 
@@ -287,18 +309,10 @@ vi.mock('./TriggerCard', async () => {
     };
 });
 
-vi.mock('./api', async () => {
-    const actual = await vi.importActual<typeof import('./api')>('./api');
-    return {
-        clearPrototypeAccessCode: mocks.clearAccessCode,
-        default: mocks.getReferenceData,
-        generateTriggerStatement: mocks.generate,
-        getPrototypeAccessCode: mocks.getAccessCode,
-        IncompleteGenerationError: actual.IncompleteGenerationError,
-        PrototypeAccessError: actual.PrototypeAccessError,
-        setPrototypeAccessCode: mocks.setAccessCode,
-    };
-});
+vi.mock('./api', () => ({
+    default: mocks.getReferenceData,
+    generateTriggerStatement: mocks.generate,
+}));
 
 vi.mock('./persistence', () => ({
     loadTriggerBuilderDraft: mocks.loadDraft,
@@ -429,7 +443,6 @@ describe('EAP Trigger Builder generation workflow', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        mocks.getAccessCode.mockReturnValue('stage-8-code');
         mocks.getReferenceData.mockResolvedValue(referenceData);
         mocks.loadDraft.mockReturnValue({ status: 'loaded', draft: createValidDraft() });
         mocks.saveDraft.mockImplementation((draft: TriggerBuilderDraft) => ({
@@ -464,6 +477,19 @@ describe('EAP Trigger Builder generation workflow', () => {
         expect(container.textContent).toContain(
             'Complete the highlighted fields before generating the Trigger statement.',
         );
+    });
+
+    test('renders the supplementary Full EAP sections after the Trigger statement', async () => {
+        await renderComponent();
+
+        const content = container.textContent;
+        expect(content).toContain('Forecast selection');
+        expect(content).toContain('Menu of forecast details');
+        expect(content).toContain('Definition and justification of impact level');
+        expect(content).toContain('Identification of the intervention area');
+        expect(content).toContain('Select region on a map');
+        expect(content).toContain('Attach relevant files');
+        expect(content).toContain('Sources of information');
     });
 
     test('processes, preserves edits, regenerates, and keeps the last statement on failure', async () => {
@@ -517,24 +543,6 @@ describe('EAP Trigger Builder generation workflow', () => {
 
         expect(getTextarea(container, 'AI-generated Trigger statement').value)
             .toBe('Existing statement');
-    });
-
-    test('prompts for missing access and retries rejected access', async () => {
-        mocks.getAccessCode.mockReturnValue(undefined);
-        mocks.generate.mockRejectedValueOnce(new PrototypeAccessError());
-        await renderComponent();
-
-        await act(async () => getButton(container, 'Generate').click());
-        expect(container.textContent).toContain('Prototype access code');
-
-        const accessInput = getTextarea(container, 'Access code');
-        await changeTextarea(accessInput, 'new-code');
-        await act(async () => getButton(container, 'Continue').click());
-        await flush();
-
-        expect(mocks.setAccessCode).toHaveBeenCalledWith('new-code');
-        expect(mocks.clearAccessCode).toHaveBeenCalledOnce();
-        expect(container.textContent).toContain('Prototype access code');
     });
 
     test('clears the generated statement when a different pilot is selected', async () => {

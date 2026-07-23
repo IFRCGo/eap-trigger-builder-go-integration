@@ -7,14 +7,7 @@ import {
     vi,
 } from 'vitest';
 
-import getReferenceData, {
-    clearPrototypeAccessCode,
-    generateTriggerStatement,
-    getPrototypeAccessCode,
-    type IncompleteGenerationError,
-    PrototypeAccessError,
-    setPrototypeAccessCode,
-} from './api';
+import getReferenceData, { generateTriggerStatement } from './api';
 import {
     createBlankDraft,
     createBlankSource,
@@ -144,7 +137,6 @@ describe('EAP Trigger Builder API', () => {
         await expect(generateTriggerStatement(
             draft,
             ['Heatwave'],
-            'session-code',
             new AbortController().signal,
         )).resolves.toBe('Generated activation statement.');
 
@@ -155,8 +147,8 @@ describe('EAP Trigger Builder API', () => {
         const firstInit = firstRequest?.[1] as RequestInit;
         expect(firstInit.headers).toMatchObject({
             'Content-Type': 'application/json',
-            'X-Prototype-Access-Code': 'session-code',
         });
+        expect(firstInit.headers).not.toHaveProperty('X-Prototype-Access-Code');
         const firstBody = JSON.parse(String(firstInit.body)) as Record<string, unknown>;
         expect(firstBody).toMatchObject({
             documentContext: {
@@ -190,7 +182,6 @@ describe('EAP Trigger Builder API', () => {
         await generateTriggerStatement(
             updatedDraft,
             ['Heatwave'],
-            'session-code',
             new AbortController().signal,
         );
         const secondInit = fetchMock.mock.calls[1]?.[1] as RequestInit;
@@ -200,7 +191,7 @@ describe('EAP Trigger Builder API', () => {
         expect(secondBody.statements[0]?.thresholdValue).toBe('42');
     });
 
-    test('sends opt-in generation facts and rejects an AI response that omits one', async () => {
+    test('sends optional generation facts without rejecting rewritten wording', async () => {
         const requiredFacts = [
             'Rainfall accumulation window: 72 hours',
             'Shire River Basin (Mwanza Gauging Station): 100 mm',
@@ -227,7 +218,6 @@ describe('EAP Trigger Builder API', () => {
         await expect(generateTriggerStatement(
             draftWithFacts,
             ['Flood'],
-            'session-code',
             new AbortController().signal,
         )).resolves.toContain('Lake Chilwa Basin');
 
@@ -251,34 +241,7 @@ describe('EAP Trigger Builder API', () => {
         await expect(generateTriggerStatement(
             draftWithFacts,
             ['Flood'],
-            'session-code',
             new AbortController().signal,
-        )).rejects.toMatchObject({
-            name: 'IncompleteGenerationError',
-            missingFacts: ['Lake Chilwa Basin: 150 mm'],
-        } satisfies Partial<IncompleteGenerationError>);
-    });
-
-    test('keeps the access code in session storage only', () => {
-        setPrototypeAccessCode(' session-code ');
-        expect(getPrototypeAccessCode()).toBe('session-code');
-        expect(localStorage.length).toBe(0);
-
-        clearPrototypeAccessCode();
-        expect(getPrototypeAccessCode()).toBe('');
-    });
-
-    test('surfaces rejected access codes without exposing backend details', async () => {
-        fetchMock.mockResolvedValue({
-            ok: false,
-            status: 403,
-        });
-
-        await expect(generateTriggerStatement(
-            createCompleteDraft(),
-            ['Heatwave'],
-            'wrong-code',
-            new AbortController().signal,
-        )).rejects.toBeInstanceOf(PrototypeAccessError);
+        )).resolves.toContain('Shire River Basin');
     });
 });

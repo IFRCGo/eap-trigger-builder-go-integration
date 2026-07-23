@@ -13,6 +13,13 @@
         "savedDraftInvalidMessage": "The saved browser draft could not be read and was reset. A blank form is ready.",
         "storageUnavailableMessage": "Browser storage is unavailable. You can continue editing, but Save and close cannot store this draft.",
         "shareButtonLabel": "Share",
+        "backButtonLabel": "Back",
+        "nextButtonLabel": "Next",
+        "saveButtonLabel": "Save",
+        "noFileSelectedLabel": "No file selected",
+        "sourceInformationNameLabel": "Name",
+        "sourceInformationLinkLabel": "Link",
+        "deleteSourceInformationButtonLabel": "Delete Source Information",
         "shareDocumentTitle": "EAP Trigger Builder draft",
         "shareWebSuccessMessage": "The draft was shared as a JSON file.",
         "shareClipboardSuccessMessage": "The draft JSON was copied to the clipboard.",
@@ -106,11 +113,6 @@
         "generateButtonLabel": "Generate",
         "generationValidationErrorMessage": "Complete the highlighted fields before generating the Trigger statement.",
         "generationProcessingMessage": "Processing the Trigger statement...",
-        "generationRetryMessage": "The Trigger statement could not be generated. Please try again.",
-        "generationIncompleteMessage": "The AI response omitted one or more required generation facts, so it was not accepted. Review the facts in the trigger card and generate again.",
-        "accessCodeModalHeading": "Prototype access code",
-        "accessCodeDescription": "Enter the temporary access code to generate the Trigger statement. It is kept only for this browser session.",
-        "accessCodeInputLabel": "Access code",
-        "accessCodeContinueButtonLabel": "Continue"
+        "generationRetryMessage": "The Trigger statement could not be generated. Please try again."
     }
 }
